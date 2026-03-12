@@ -55,10 +55,15 @@ const Landing = () => {
                   transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 1 }}
                 />
               </Link>
-              <button className="px-8 py-4 bg-slate-900 border border-slate-700 hover:border-slate-500 rounded-lg font-bold text-lg transition-all flex items-center gap-2">
+              <a 
+                href="https://github.com/geccodingclub" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="px-8 py-4 bg-slate-900 border border-slate-700 hover:border-slate-500 rounded-lg font-bold text-lg transition-all flex items-center gap-2 text-white no-underline"
+              >
                 <Code2 size={20} />
                 <span>Explore Code</span>
-              </button>
+              </a>
             </motion.div>
           </div>
 
