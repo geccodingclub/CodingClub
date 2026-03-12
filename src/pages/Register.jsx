@@ -14,7 +14,48 @@ const Register = () => {
   const fileInputRef = useRef(null);
   const [imgSrc, setImgSrc] = useState(null);
   const [uploadMode, setUploadMode] = useState('gallery'); // 'camera' or 'gallery'
+  const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email) {
+      newErrors.email = 'Email is required';
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = 'Please enter a valid college email';
+    }
+
+    // Password validation
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters';
+    }
+
+    // Phone validation
+    const phoneRegex = /^\d{10}$/;
+    if (!formData.phoneNumber) {
+      newErrors.phoneNumber = 'Phone number is required';
+    } else if (!phoneRegex.test(formData.phoneNumber.replace(/\D/g, ''))) {
+      newErrors.phoneNumber = 'Enter a valid 10-digit phone number';
+    }
+
+    // Name validation
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+    }
+
+    // Roll No validation
+    if (!formData.rollNo.trim()) {
+      newErrors.rollNo = 'Roll number is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const capture = useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot();
@@ -44,6 +85,12 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      showNotification('Please correct the errors in the form', 'error');
+      return;
+    }
+
     if (!formData.profilePhoto) {
       showNotification('Identity visual record required', 'error');
       return;
@@ -83,33 +130,39 @@ const Register = () => {
                 { name: 'password', icon: <Lock size={18} />, placeholder: 'Password', type: 'password' },
               ].map((f) => (
                 <div key={f.name} className="group/input">
-                  <div className="flex items-center gap-3 px-4 py-3 bg-slate-800/50 border border-white/5 rounded-lg focus-within:border-blue-500/50 transition-all">
-                    <span className="text-slate-500 group-focus-within/input:text-blue-400 transition-colors">{f.icon}</span>
+                  <div className={`flex items-center gap-3 px-4 py-3 bg-slate-800/50 border ${errors[f.name] ? 'border-red-500/50' : 'border-white/5'} rounded-lg focus-within:border-blue-500/50 transition-all`}>
+                    <span className={`${errors[f.name] ? 'text-red-400' : 'text-slate-500'} group-focus-within/input:text-blue-400 transition-colors`}>{f.icon}</span>
                     <input
-                      required
                       type={f.type || 'text'}
                       placeholder={f.placeholder}
                       className="bg-transparent border-none outline-none w-full font-mono text-sm placeholder:text-slate-600"
                       value={formData[f.name]}
-                      onChange={(e) => setFormData({ ...formData, [f.name]: e.target.value })}
+                      onChange={(e) => {
+                        setFormData({ ...formData, [f.name]: e.target.value });
+                        if (errors[f.name]) setErrors({ ...errors, [f.name]: null });
+                      }}
                     />
                   </div>
+                  {errors[f.name] && <p className="text-[10px] text-red-400 mt-1 ml-1 font-mono">{errors[f.name]}</p>}
                 </div>
               ))}
             </div>
 
             <div className="space-y-6">
               <div className="group/input text-sm">
-                <div className="flex items-center gap-3 px-4 py-3 bg-slate-800/50 border border-white/5 rounded-lg focus-within:border-blue-500/50 transition-all">
-                  <span className="text-slate-500 group-focus-within/input:text-blue-400 transition-colors"><Fingerprint size={18} /></span>
+                <div className={`flex items-center gap-3 px-4 py-3 bg-slate-800/50 border ${errors.rollNo ? 'border-red-500/50' : 'border-white/5'} rounded-lg focus-within:border-blue-500/50 transition-all`}>
+                  <span className={`${errors.rollNo ? 'text-red-400' : 'text-slate-500'} group-focus-within/input:text-blue-400 transition-colors`}><Fingerprint size={18} /></span>
                   <input
-                    required
                     placeholder="College Roll No"
                     className="bg-transparent border-none outline-none w-full font-mono placeholder:text-slate-600"
                     value={formData.rollNo}
-                    onChange={(e) => setFormData({ ...formData, rollNo: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, rollNo: e.target.value });
+                      if (errors.rollNo) setErrors({ ...errors, rollNo: null });
+                    }}
                   />
                 </div>
+                {errors.rollNo && <p className="text-[10px] text-red-400 mt-1 ml-1 font-mono">{errors.rollNo}</p>}
               </div>
 
               <div className="group/input text-sm">
@@ -140,17 +193,20 @@ const Register = () => {
               </div>
 
               <div className="group/input text-sm">
-                <div className="flex items-center gap-3 px-4 py-3 bg-slate-800/50 border border-white/5 rounded-lg focus-within:border-blue-500/50 transition-all">
-                  <span className="text-slate-500 group-focus-within/input:text-blue-400 transition-colors"><Phone size={18} /></span>
+                <div className={`flex items-center gap-3 px-4 py-3 bg-slate-800/50 border ${errors.phoneNumber ? 'border-red-500/50' : 'border-white/5'} rounded-lg focus-within:border-blue-500/50 transition-all`}>
+                  <span className={`${errors.phoneNumber ? 'text-red-400' : 'text-slate-500'} group-focus-within/input:text-blue-400 transition-colors`}><Phone size={18} /></span>
                   <input
-                    required
                     type="tel"
                     placeholder="Phone Number"
                     className="bg-transparent border-none outline-none w-full font-mono placeholder:text-slate-600"
                     value={formData.phoneNumber}
-                    onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, phoneNumber: e.target.value });
+                      if (errors.phoneNumber) setErrors({ ...errors, phoneNumber: null });
+                    }}
                   />
                 </div>
+                {errors.phoneNumber && <p className="text-[10px] text-red-400 mt-1 ml-1 font-mono">{errors.phoneNumber}</p>}
               </div>
             </div>
           </div>
