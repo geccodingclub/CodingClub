@@ -10,16 +10,19 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const { login } = useAuth();
   const { showNotification } = useNotification();
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       await login(email, password);
       showNotification('Access authorized. Welcome back.');
       navigate('/dashboard');
     } catch (err) {
       showNotification(err.response?.data?.message || 'Authorization failed. Check credentials.', 'error');
+      setLoading(false);
     }
   };
 
@@ -71,9 +74,12 @@ const Login = () => {
             </div>
           </div>
 
-          <button className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-lg transition-all flex items-center justify-center gap-3 group/btn uppercase tracking-widest italic mt-8">
-            Access_Now
-            <ChevronRight className="group-hover/btn:translate-x-1 transition-transform" />
+          <button 
+            disabled={loading}
+            className={`w-full ${loading ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500 text-white'} font-black py-4 rounded-lg transition-all flex items-center justify-center gap-3 group/btn uppercase tracking-widest italic mt-8`}
+          >
+            {loading ? 'Verifying_Identity...' : 'Access_Now'}
+            {!loading && <ChevronRight className="group-hover/btn:translate-x-1 transition-transform" />}
           </button>
         </form>
 
