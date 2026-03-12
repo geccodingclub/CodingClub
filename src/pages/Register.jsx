@@ -6,9 +6,18 @@ import { User, Mail, Lock, Fingerprint, BookOpen, Calendar, ChevronRight, Phone,
 import { useNotification } from '../context/NotificationContext';
 import Webcam from 'react-webcam';
 
+const DEPARTMENTS = [
+  'Instrumentation Engineering',
+  'Civil Engineering',
+  'Computer Science and Engineering',
+  'Mechanical Engineering',
+  'Electrical Engineering',
+  'Electronics and Communication Engineering'
+];
+
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: '', email: '', password: '', rollNo: '', department: 'Computer Science', year: 1, phoneNumber: '', profilePhoto: ''
+    name: '', email: '', password: '', rollNo: '', department: DEPARTMENTS[0], year: 1, phoneNumber: '', profilePhoto: ''
   });
   const webcamRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -138,8 +147,9 @@ const Register = () => {
                       className="bg-transparent border-none outline-none w-full font-mono text-sm placeholder:text-slate-600"
                       value={formData[f.name]}
                       onChange={(e) => {
-                        setFormData({ ...formData, [f.name]: e.target.value });
-                        if (errors[f.name]) setErrors({ ...errors, [f.name]: null });
+                        const { value } = e.target;
+                        setFormData(prev => ({ ...prev, [f.name]: value }));
+                        if (errors[f.name]) setErrors(prev => ({ ...prev, [f.name]: null }));
                       }}
                     />
                   </div>
@@ -157,8 +167,9 @@ const Register = () => {
                     className="bg-transparent border-none outline-none w-full font-mono placeholder:text-slate-600"
                     value={formData.rollNo}
                     onChange={(e) => {
-                      setFormData({ ...formData, rollNo: e.target.value });
-                      if (errors.rollNo) setErrors({ ...errors, rollNo: null });
+                      const { value } = e.target;
+                      setFormData(prev => ({ ...prev, rollNo: value }));
+                      if (errors.rollNo) setErrors(prev => ({ ...prev, rollNo: null }));
                     }}
                   />
                 </div>
@@ -171,9 +182,9 @@ const Register = () => {
                   <select 
                     className="bg-transparent border-none outline-none w-full font-mono appearance-none"
                     value={formData.department}
-                    onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                    onChange={(e) => setFormData(prev => ({ ...prev, department: e.target.value }))}
                   >
-                    {['Instrumentation Engineering', 'Civil Engineering', 'Computer Science and Engineering', 'Mechanical Engineering', 'Electrical', 'Electronics Engineering'].map(dept => (
+                    {DEPARTMENTS.map(dept => (
                       <option key={dept} value={dept} className="bg-slate-900">{dept}</option>
                     ))}
                   </select>
@@ -185,7 +196,7 @@ const Register = () => {
                   <select 
                     className="bg-transparent border-none outline-none w-full font-mono appearance-none"
                     value={formData.year}
-                    onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })}
+                    onChange={(e) => setFormData(prev => ({ ...prev, year: parseInt(e.target.value) }))}
                   >
                     {[1,2,3,4].map(y => <option key={y} value={y} className="bg-slate-900">{y} Year</option>)}
                   </select>
@@ -201,8 +212,9 @@ const Register = () => {
                     className="bg-transparent border-none outline-none w-full font-mono placeholder:text-slate-600"
                     value={formData.phoneNumber}
                     onChange={(e) => {
-                      setFormData({ ...formData, phoneNumber: e.target.value });
-                      if (errors.phoneNumber) setErrors({ ...errors, phoneNumber: null });
+                      const { value } = e.target;
+                      setFormData(prev => ({ ...prev, phoneNumber: value }));
+                      if (errors.phoneNumber) setErrors(prev => ({ ...prev, phoneNumber: null }));
                     }}
                   />
                 </div>
