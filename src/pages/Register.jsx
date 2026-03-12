@@ -1,21 +1,37 @@
+import { useState, useRef, useCallback } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Mail, Lock, Fingerprint, BookOpen, Calendar, ChevronRight, Phone, Camera, RotateCcw } from 'lucide-react';
+import { User, Mail, Lock, Fingerprint, BookOpen, Calendar, ChevronRight, Phone, Camera, RotateCcw, Upload, Image as ImageIcon } from 'lucide-react';
 import { useNotification } from '../context/NotificationContext';
 import Webcam from 'react-webcam';
-import { useRef, useCallback } from 'react';
 
 const Register = () => {
   const [formData, setFormData] = useState({
     name: '', email: '', password: '', rollNo: '', department: 'Computer Science', year: 1, phoneNumber: '', profilePhoto: ''
   });
   const webcamRef = useRef(null);
+  const fileInputRef = useRef(null);
   const [imgSrc, setImgSrc] = useState(null);
+  const [uploadMode, setUploadMode] = useState('camera'); // 'camera' or 'gallery'
 
   const capture = useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot();
     setImgSrc(imageSrc);
     setFormData(prev => ({ ...prev, profilePhoto: imageSrc }));
   }, [webcamRef]);
+
+  const handleGalleryUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImgSrc(reader.result);
+        setFormData(prev => ({ ...prev, profilePhoto: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const retake = () => {
     setImgSrc(null);
@@ -27,6 +43,10 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.profilePhoto) {
+      showNotification('Identity visual record required', 'error');
+      return;
+    }
     try {
       await register(formData);
       showNotification('Identity record created. Welcome to the club.');
@@ -133,27 +153,75 @@ const Register = () => {
           </div>
 
           <div className="space-y-4 pt-6 mt-6 border-t border-white/5">
-            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 italic">Verify_Identity_Bio</h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 italic">Verify_Identity_Bio</h3>
+              <div className="flex bg-slate-800/50 p-1 rounded-lg border border-white/5">
+                <button
+                  type="button"
+                  onClick={() => { setUploadMode('camera'); retake(); }}
+                  className={`px-3 py-1.5 rounded-md text-[10px] font-black uppercase transition-all flex items-center gap-2 ${uploadMode === 'camera' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                >
+                  <Camera size={12} />
+                  Cam
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setUploadMode('gallery'); retake(); }}
+                  className={`px-3 py-1.5 rounded-md text-[10px] font-black uppercase transition-all flex items-center gap-2 ${uploadMode === 'gallery' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                >
+                  <Upload size={12} />
+                  Gallery
+                </button>
+              </div>
+            </div>
+
             <div className="relative group/camera rounded-xl overflow-hidden bg-slate-800/50 border border-white/5 aspect-video flex items-center justify-center">
               {!imgSrc ? (
                 <>
-                  <Webcam
-                    audio={false}
-                    ref={webcamRef}
-                    screenshotFormat="image/jpeg"
-                    className="w-full h-full object-cover"
-                    videoConstraints={{ facingMode: "user" }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent flex items-end justify-center pb-6">
-                    <button
-                      type="button"
-                      onClick={capture}
-                      className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-black text-[10px] uppercase tracking-widest transition-all shadow-xl"
-                    >
-                      <Camera size={16} />
-                      Capture_Visual_ID
-                    </button>
-                  </div>
+                  {uploadMode === 'camera' ? (
+                    <>
+                      <Webcam
+                        audio={false}
+                        ref={webcamRef}
+                        screenshotFormat="image/jpeg"
+                        className="w-full h-full object-cover"
+                        videoConstraints={{ facingMode: "user" }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent flex items-end justify-center pb-6">
+                        <button
+                          type="button"
+                          onClick={capture}
+                          className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-black text-[10px] uppercase tracking-widest transition-all shadow-xl"
+                        >
+                          <Camera size={16} />
+                          Capture_Visual_ID
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center text-blue-500 border border-blue-500/20">
+                        <ImageIcon size={32} />
+                      </div>
+                      <input
+                        type="file"
+                        id="gallery-upload"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={handleGalleryUpload}
+                        ref={fileInputRef}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current.click()}
+                        className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-black text-[10px] uppercase tracking-widest transition-all shadow-xl"
+                      >
+                        <Upload size={16} />
+                        Select_From_Gallery
+                      </button>
+                      <p className="text-[9px] font-mono text-slate-500 uppercase tracking-widest mt-2">Format: JPG/PNG/WEBP</p>
+                    </div>
+                  )}
                 </>
               ) : (
                 <>
@@ -182,7 +250,7 @@ const Register = () => {
             disabled={!formData.profilePhoto}
             className={`w-full ${!formData.profilePhoto ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500 text-white'} font-black py-4 rounded-lg transition-all flex items-center justify-center gap-3 group/btn uppercase tracking-widest italic mt-8`}
           >
-            {formData.profilePhoto ? 'Execute_Registration' : 'Capture_Visual_To_Initialize'}
+            {formData.profilePhoto ? 'Execute_Registration' : 'Visual_ID_Required'}
             <ChevronRight className="group-hover/btn:translate-x-1 transition-transform" />
           </button>
         </form>
