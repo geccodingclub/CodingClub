@@ -19,6 +19,7 @@ const Dashboard = () => {
   const [showEventModal, setShowEventModal] = useState(false);
   const [showCardModal, setShowCardModal] = useState(false);
   const [newEvent, setNewEvent] = useState({ title: '', description: '', date: '', location: '' });
+  const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
     if (user && (user.role === 'VOLUNTEER' || user.role === 'PRESIDENT')) {
@@ -59,16 +60,20 @@ const Dashboard = () => {
   };
 
   const handleVerify = async (id) => {
+    setProcessing(true);
     try {
       await API.patch(`/users/verify/${id}`);
       setStudents(students.map(s => s._id === id ? { ...s, isVerified: true } : s));
       showNotification('Sector verified successfully');
     } catch (err) {
       showNotification('Verification protocol failed', 'error');
+    } finally {
+      setProcessing(false);
     }
   };
 
   const handleAssignRole = async (userId, role) => {
+    setProcessing(true);
     try {
       await API.post('/users/assign-role', { userId, role });
       showNotification(`Role updated to ${role}`);
@@ -76,11 +81,14 @@ const Dashboard = () => {
       fetchStudents();
     } catch (err) {
       showNotification(err.response?.data?.message || 'Access level update failed', 'error');
+    } finally {
+      setProcessing(false);
     }
   };
 
   const handleCreateEvent = async (e) => {
     e.preventDefault();
+    setProcessing(true);
     try {
       await API.post('/events', newEvent);
       setShowEventModal(false);
@@ -89,40 +97,45 @@ const Dashboard = () => {
       showNotification('Event nexus deployed successfully');
     } catch (err) {
       showNotification('Event deployment failed', 'error');
+    } finally {
+      setProcessing(false);
     }
   };
 
   const handleDeleteEvent = async (id) => {
     if (!window.confirm('Terminate event deployment?')) return;
+    setProcessing(true);
     try {
       await API.delete(`/events/${id}`);
       fetchEvents();
       showNotification('Event termination successful');
     } catch (err) { 
       showNotification('Event termination failed', 'error'); 
+    } finally {
+      setProcessing(false);
     }
   };
 
   if (!user) return null;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-20 min-h-screen">
-      <header className="mb-16">
+    <div className="max-w-7xl mx-auto px-4 py-12 md:py-20 min-h-screen">
+      <header className="mb-8 md:mb-16">
         <div className="flex items-center gap-4 mb-4">
-           <div className="w-12 h-12 bg-blue-600/20 rounded-xl flex items-center justify-center text-blue-500 border border-blue-500/30">
-             <TerminalIcon size={24} />
+           <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-600/20 rounded-xl flex items-center justify-center text-blue-500 border border-blue-500/30">
+             <TerminalIcon size={20} className="md:w-6 md:h-6" />
            </div>
            <div>
-             <h1 className="text-4xl font-black italic tracking-tighter uppercase leading-none">Console<span className="text-blue-500">_Output</span></h1>
-             <p className="text-slate-500 font-mono text-xs mt-1 uppercase tracking-widest">// Logged in as: {user.name} ({user.role})</p>
+             <h1 className="text-2xl md:text-4xl font-black italic tracking-tighter uppercase leading-none">Console<span className="text-blue-500">_Output</span></h1>
+             <p className="text-slate-500 font-mono text-[10px] md:text-xs mt-1 uppercase tracking-widest">// Logged in as: {user.name} ({user.role})</p>
            </div>
         </div>
       </header>
 
       {(user.role === 'VOLUNTEER' || user.role === 'PRESIDENT') ? (
-        <div className="space-y-12">
+        <div className="space-y-8 md:space-y-12">
           {/* Stats Bar */}
-          <div className="grid md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               { label: 'DB_TOTAL', value: students.length, icon: <Users size={16}/>, color: 'blue' },
               { label: 'QUEUE_PENDING', value: students.filter(s => !s.isVerified).length, icon: <Clock size={16}/>, color: 'amber' },
@@ -182,10 +195,11 @@ const Dashboard = () => {
                       <td className="px-6 py-4 text-right">
                         {!student.isVerified && (
                           <button 
+                            disabled={processing}
                             onClick={() => handleVerify(student._id)}
-                            className="bg-blue-600 hover:bg-blue-500 text-white font-black px-4 py-2 rounded text-[10px] uppercase transition-all italic tracking-widest"
+                            className={`${processing ? 'bg-slate-700 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500'} text-white font-black px-4 py-2 rounded text-[10px] uppercase transition-all italic tracking-widest`}
                           >
-                            Verify_Now
+                            {processing ? 'SYNCING...' : 'Verify_Now'}
                           </button>
                         )}
                       </td>
@@ -223,14 +237,16 @@ const Dashboard = () => {
                           <td className="px-6 py-4 text-slate-400 font-mono italic">{member.role}</td>
                           <td className="px-6 py-4 text-right space-x-2">
                             <button 
+                              disabled={processing}
                               onClick={() => handleAssignRole(member._id, 'VOLUNTEER')}
-                              className="bg-blue-600/20 hover:bg-blue-600 text-blue-400 hover:text-white border border-blue-500/30 font-black px-3 py-1 rounded text-[10px] uppercase transition-all"
+                              className={`${processing ? 'bg-slate-800 cursor-not-allowed text-slate-600' : 'bg-blue-600/20 hover:bg-blue-600 text-blue-400 hover:text-white border border-blue-500/30'} font-black px-3 py-1 rounded text-[10px] uppercase transition-all`}
                             >
                               VOLUNTEER
                             </button>
                             <button 
+                              disabled={processing}
                               onClick={() => handleAssignRole(member._id, 'STUDENT')}
-                              className="bg-slate-700/20 hover:bg-slate-700 text-slate-400 border border-white/10 font-black px-3 py-1 rounded text-[10px] uppercase transition-all"
+                              className={`${processing ? 'bg-slate-800 cursor-not-allowed text-slate-600' : 'bg-slate-700/20 hover:bg-slate-700 text-slate-400 border border-white/10'} font-black px-3 py-1 rounded text-[10px] uppercase transition-all`}
                             >
                               STUDENT
                             </button>
@@ -265,8 +281,9 @@ const Dashboard = () => {
                         <p className="text-[10px] font-mono text-slate-500 mt-1">{new Date(event.date).toLocaleDateString()} @ {event.location}</p>
                       </div>
                       <button 
+                        disabled={processing}
                         onClick={() => handleDeleteEvent(event._id)}
-                        className="text-slate-600 hover:text-red-500 transition-colors"
+                        className={`${processing ? 'text-slate-700 cursor-not-allowed' : 'text-slate-600 hover:text-red-500'} transition-colors`}
                       >
                         <Clock size={16} />
                       </button>
@@ -343,9 +360,10 @@ const Dashboard = () => {
                   </div>
                   <button 
                     type="submit"
-                    className="w-full bg-purple-600 hover:bg-purple-500 text-white font-black py-4 rounded-xl shadow-[0_10px_30px_rgba(147,51,234,0.3)] transition-all uppercase italic tracking-widest mt-4"
+                    disabled={processing}
+                    className={`w-full ${processing ? 'bg-slate-800 text-slate-600 cursor-not-allowed' : 'bg-purple-600 hover:bg-purple-500 text-white'} font-black py-4 rounded-xl shadow-[0_10px_30px_rgba(147,51,234,0.3)] transition-all uppercase italic tracking-widest mt-4`}
                   >
-                    Authorize_Deployment
+                    {processing ? 'DEPLOYING_NEXUS...' : 'Authorize_Deployment'}
                   </button>
                 </form>
               </motion.div>

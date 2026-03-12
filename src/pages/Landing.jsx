@@ -22,7 +22,7 @@ const Landing = () => {
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-6xl md:text-8xl font-black mb-8 leading-[1.1]"
+              className="text-5xl md:text-8xl font-black mb-6 md:mb-8 leading-[1.1]"
             >
               Zero to <br />
               <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">

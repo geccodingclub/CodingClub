@@ -18,11 +18,11 @@ const MemberCard = ({ user }) => {
   };
 
   return (
-    <div className="flex flex-col items-center gap-8 py-8">
+    <div className="flex flex-col items-center gap-8 py-8 w-full max-w-full overflow-hidden">
       {/* Card Container */}
       <div 
         ref={cardRef}
-        className="w-[400px] h-[580px] bg-slate-950 text-white rounded-[2rem] p-8 relative overflow-hidden shadow-2xl border border-blue-500/30"
+        className="w-full max-w-[400px] aspect-[400/580] bg-slate-950 text-white rounded-[2rem] p-6 md:p-8 relative overflow-hidden shadow-2xl border border-blue-500/30"
         style={{
           backgroundImage: 'radial-gradient(circle at top right, rgba(37, 99, 235, 0.15) 0%, transparent 70%)',
         }}

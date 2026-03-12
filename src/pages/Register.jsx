@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { useState, useRef, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -6,26 +5,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { User, Mail, Lock, Fingerprint, BookOpen, Calendar, ChevronRight, Phone, Camera, RotateCcw, Upload, Image as ImageIcon } from 'lucide-react';
 import { useNotification } from '../context/NotificationContext';
 import Webcam from 'react-webcam';
-=======
-import { motion, AnimatePresence } from 'framer-motion';
-import { User, Mail, Lock, Fingerprint, BookOpen, Calendar, ChevronRight, Phone, Camera, RotateCcw } from 'lucide-react';
-import { useNotification } from '../context/NotificationContext';
-import Webcam from 'react-webcam';
-import { useRef, useCallback } from 'react';
->>>>>>> dfa4839c4ceb8a3d44157b6c15c422943f7db850
 
 const Register = () => {
   const [formData, setFormData] = useState({
     name: '', email: '', password: '', rollNo: '', department: 'Computer Science', year: 1, phoneNumber: '', profilePhoto: ''
   });
   const webcamRef = useRef(null);
-<<<<<<< HEAD
   const fileInputRef = useRef(null);
   const [imgSrc, setImgSrc] = useState(null);
   const [uploadMode, setUploadMode] = useState('camera'); // 'camera' or 'gallery'
-=======
-  const [imgSrc, setImgSrc] = useState(null);
->>>>>>> dfa4839c4ceb8a3d44157b6c15c422943f7db850
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const capture = useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot();
@@ -33,7 +22,6 @@ const Register = () => {
     setFormData(prev => ({ ...prev, profilePhoto: imageSrc }));
   }, [webcamRef]);
 
-<<<<<<< HEAD
   const handleGalleryUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -46,8 +34,6 @@ const Register = () => {
     }
   };
 
-=======
->>>>>>> dfa4839c4ceb8a3d44157b6c15c422943f7db850
   const retake = () => {
     setImgSrc(null);
     setFormData(prev => ({ ...prev, profilePhoto: '' }));
@@ -62,6 +48,7 @@ const Register = () => {
       showNotification('Identity visual record required', 'error');
       return;
     }
+    setIsSubmitting(true);
     try {
       await register(formData);
       showNotification('Identity record created. Welcome to the club.');
@@ -69,15 +56,16 @@ const Register = () => {
     } catch (err) {
       const msg = err.response?.data?.message || err.response?.data?.error || 'Registration sequence failure';
       showNotification(msg, 'error');
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 py-32">
+    <div className="min-h-screen flex items-center justify-center p-4 py-20 md:py-32">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-xl bg-slate-900/60 backdrop-blur-xl p-10 rounded-2xl border border-white/5 shadow-2xl relative overflow-hidden group"
+        className="w-full max-w-xl bg-slate-900/60 backdrop-blur-xl p-6 md:p-10 rounded-2xl border border-white/5 shadow-2xl relative overflow-hidden group"
       >
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500" />
         
@@ -168,7 +156,6 @@ const Register = () => {
           </div>
 
           <div className="space-y-4 pt-6 mt-6 border-t border-white/5">
-<<<<<<< HEAD
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 italic">Verify_Identity_Bio</h3>
               <div className="flex bg-slate-800/50 p-1 rounded-lg border border-white/5">
@@ -238,29 +225,6 @@ const Register = () => {
                       <p className="text-[9px] font-mono text-slate-500 uppercase tracking-widest mt-2">Format: JPG/PNG/WEBP</p>
                     </div>
                   )}
-=======
-            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 italic">Verify_Identity_Bio</h3>
-            <div className="relative group/camera rounded-xl overflow-hidden bg-slate-800/50 border border-white/5 aspect-video flex items-center justify-center">
-              {!imgSrc ? (
-                <>
-                  <Webcam
-                    audio={false}
-                    ref={webcamRef}
-                    screenshotFormat="image/jpeg"
-                    className="w-full h-full object-cover"
-                    videoConstraints={{ facingMode: "user" }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent flex items-end justify-center pb-6">
-                    <button
-                      type="button"
-                      onClick={capture}
-                      className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-black text-[10px] uppercase tracking-widest transition-all shadow-xl"
-                    >
-                      <Camera size={16} />
-                      Capture_Visual_ID
-                    </button>
-                  </div>
->>>>>>> dfa4839c4ceb8a3d44157b6c15c422943f7db850
                 </>
               ) : (
                 <>
@@ -286,15 +250,11 @@ const Register = () => {
 
           <button 
             type="submit"
-            disabled={!formData.profilePhoto}
-            className={`w-full ${!formData.profilePhoto ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500 text-white'} font-black py-4 rounded-lg transition-all flex items-center justify-center gap-3 group/btn uppercase tracking-widest italic mt-8`}
+            disabled={!formData.profilePhoto || isSubmitting}
+            className={`w-full ${(!formData.profilePhoto || isSubmitting) ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500 text-white'} font-black py-4 rounded-lg transition-all flex items-center justify-center gap-3 group/btn uppercase tracking-widest italic mt-8`}
           >
-<<<<<<< HEAD
-            {formData.profilePhoto ? 'Execute_Registration' : 'Visual_ID_Required'}
-=======
-            {formData.profilePhoto ? 'Execute_Registration' : 'Capture_Visual_To_Initialize'}
->>>>>>> dfa4839c4ceb8a3d44157b6c15c422943f7db850
-            <ChevronRight className="group-hover/btn:translate-x-1 transition-transform" />
+            {isSubmitting ? 'Processing_Record...' : (formData.profilePhoto ? 'Execute_Registration' : 'Visual_ID_Required')}
+            {!isSubmitting && <ChevronRight className="group-hover/btn:translate-x-1 transition-transform" />}
           </button>
         </form>
 
