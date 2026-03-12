@@ -13,7 +13,7 @@ const Register = () => {
   const webcamRef = useRef(null);
   const fileInputRef = useRef(null);
   const [imgSrc, setImgSrc] = useState(null);
-  const [uploadMode, setUploadMode] = useState('camera'); // 'camera' or 'gallery'
+  const [uploadMode, setUploadMode] = useState('gallery'); // 'camera' or 'gallery'
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const capture = useCallback(() => {
