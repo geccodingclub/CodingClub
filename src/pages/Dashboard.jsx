@@ -4,6 +4,8 @@ import API from '../api/axios';
 import { motion } from 'framer-motion';
 import { CheckCircle, Clock, ShieldCheck, Users, Search, Code, Cpu, Terminal as TerminalIcon, Plus, X } from 'lucide-react';
 import { useNotification } from '../context/NotificationContext';
+import MemberCard from '../components/MemberCard';
+import { User as UserIcon } from 'lucide-react';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -15,6 +17,7 @@ const Dashboard = () => {
   const [events, setEvents] = useState([]);
   const [members, setMembers] = useState([]);
   const [showEventModal, setShowEventModal] = useState(false);
+  const [showCardModal, setShowCardModal] = useState(false);
   const [newEvent, setNewEvent] = useState({ title: '', description: '', date: '', location: '' });
 
   useEffect(() => {
@@ -146,8 +149,9 @@ const Dashboard = () => {
               <table className="w-full text-left font-mono text-xs">
                 <thead>
                   <tr className="bg-white/5 text-slate-500">
+                    <th className="px-6 py-4 uppercase tracking-widest">Entry_Bio</th>
                     <th className="px-6 py-4 uppercase tracking-widest">Entry_Name</th>
-                    <th className="px-6 py-4 uppercase tracking-widest">Index_ID</th>
+                    <th className="px-6 py-4 uppercase tracking-widest">Roll_No</th>
                     <th className="px-6 py-4 uppercase tracking-widest">Sector_Year</th>
                     <th className="px-6 py-4 uppercase tracking-widest">State</th>
                     <th className="px-6 py-4 uppercase tracking-widest text-right">Action</th>
@@ -156,8 +160,17 @@ const Dashboard = () => {
                 <tbody className="divide-y divide-white/5">
                   {students.map((student) => (
                     <tr key={student._id} className="hover:bg-blue-500/5 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-800 border border-white/5">
+                          {student.profilePhoto ? (
+                            <img src={student.profilePhoto} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-slate-600"><UserIcon size={16} /></div>
+                          )}
+                        </div>
+                      </td>
                       <td className="px-6 py-4 font-bold text-slate-200">{student.name}</td>
-                      <td className="px-6 py-4 text-slate-400 font-mono italic">{student.collegeId}</td>
+                      <td className="px-6 py-4 text-slate-400 font-mono italic">{student.rollNo}</td>
                       <td className="px-6 py-4 text-slate-400">[{student.department}]_{student.year}y</td>
                       <td className="px-6 py-4">
                         {student.isVerified ? (
@@ -418,14 +431,32 @@ const Dashboard = () => {
             animate={{ opacity: 1, x: 0 }}
             className="p-10 rounded-2xl bg-slate-950/40 border border-white/5 font-mono"
           >
+            <div className="flex flex-col items-center mb-10 pb-10 border-b border-white/5">
+              <div className="w-24 h-24 rounded-2xl overflow-hidden border-2 border-blue-500/30 shadow-[0_0_20px_rgba(59,130,246,0.2)] bg-slate-900 mb-4">
+                {user.profilePhoto ? (
+                  <img src={user.profilePhoto} alt={user.name} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-slate-700"><UserIcon size={40} /></div>
+                )}
+              </div>
+              <button 
+                onClick={() => setShowCardModal(true)}
+                className="text-[10px] font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-2 group/id"
+              >
+                <ShieldCheck size={14} className="group-hover/id:scale-110 transition-transform" />
+                View_Member_ID
+              </button>
+            </div>
+
             <h3 className="text-xs font-black uppercase tracking-[0.3em] text-slate-500 mb-10 italic underline underline-offset-8 decoration-blue-500/50">
               Profile_Metadata
             </h3>
             <div className="space-y-8">
               {[
-                { label: 'UID', value: user.collegeId },
+                { label: 'ROLL_NO', value: user.rollNo },
                 { label: 'DEPT', value: user.department },
                 { label: 'YEAR', value: `${user.year}nd Year` },
+                { label: 'CONTACT', value: user.phoneNumber || 'N/A' },
                 { label: 'TIMESTAMP', value: new Date(user.createdAt).toLocaleDateString() }
               ].map((meta, i) => (
                 <div key={i}>
@@ -434,6 +465,25 @@ const Dashboard = () => {
                 </div>
               ))}
             </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Member Card Modal */}
+      {showCardModal && (
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-xl z-50 flex items-center justify-center p-4">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="relative"
+          >
+            <button 
+              onClick={() => setShowCardModal(false)}
+              className="absolute -top-12 right-0 text-white/50 hover:text-white flex items-center gap-2 uppercase font-mono text-xs tracking-widest"
+            >
+              Close_Console <X size={20} />
+            </button>
+            <MemberCard user={user} />
           </motion.div>
         </div>
       )}

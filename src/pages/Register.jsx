@@ -1,14 +1,26 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { motion } from 'framer-motion';
-import { User, Mail, Lock, Fingerprint, BookOpen, Calendar, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { User, Mail, Lock, Fingerprint, BookOpen, Calendar, ChevronRight, Phone, Camera, RotateCcw } from 'lucide-react';
 import { useNotification } from '../context/NotificationContext';
+import Webcam from 'react-webcam';
+import { useRef, useCallback } from 'react';
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: '', email: '', password: '', collegeId: '', department: '', year: 1
+    name: '', email: '', password: '', rollNo: '', department: 'Computer Science', year: 1, phoneNumber: '', profilePhoto: ''
   });
+  const webcamRef = useRef(null);
+  const [imgSrc, setImgSrc] = useState(null);
+
+  const capture = useCallback(() => {
+    const imageSrc = webcamRef.current.getScreenshot();
+    setImgSrc(imageSrc);
+    setFormData(prev => ({ ...prev, profilePhoto: imageSrc }));
+  }, [webcamRef]);
+
+  const retake = () => {
+    setImgSrc(null);
+    setFormData(prev => ({ ...prev, profilePhoto: '' }));
+  };
   const { register } = useAuth();
   const { showNotification } = useNotification();
   const navigate = useNavigate();
@@ -64,26 +76,35 @@ const Register = () => {
             </div>
 
             <div className="space-y-6">
-              {[
-                { name: 'collegeId', icon: <Fingerprint size={18} />, placeholder: 'ID Number' },
-                { name: 'department', icon: <BookOpen size={18} />, placeholder: 'Department' },
-              ].map((f) => (
-                <div key={f.name} className="group/input text-sm">
-                  <div className="flex items-center gap-3 px-4 py-3 bg-slate-800/50 border border-white/5 rounded-lg focus-within:border-blue-500/50 transition-all">
-                    <span className="text-slate-500 group-focus-within/input:text-blue-400 transition-colors">{f.icon}</span>
-                    <input
-                      required
-                      placeholder={f.placeholder}
-                      className="bg-transparent border-none outline-none w-full font-mono placeholder:text-slate-600"
-                      value={formData[f.name]}
-                      onChange={(e) => setFormData({ ...formData, [f.name]: e.target.value })}
-                    />
-                  </div>
+              <div className="group/input text-sm">
+                <div className="flex items-center gap-3 px-4 py-3 bg-slate-800/50 border border-white/5 rounded-lg focus-within:border-blue-500/50 transition-all">
+                  <span className="text-slate-500 group-focus-within/input:text-blue-400 transition-colors"><Fingerprint size={18} /></span>
+                  <input
+                    required
+                    placeholder="College Roll No"
+                    className="bg-transparent border-none outline-none w-full font-mono placeholder:text-slate-600"
+                    value={formData.rollNo}
+                    onChange={(e) => setFormData({ ...formData, rollNo: e.target.value })}
+                  />
                 </div>
-              ))}
-              
-              <div className="group/input">
-                <div className="flex items-center gap-3 px-4 py-3 bg-slate-800/50 border border-white/5 rounded-lg focus-within:border-blue-500/50 transition-all text-sm">
+              </div>
+
+              <div className="group/input text-sm">
+                <div className="flex items-center gap-3 px-4 py-3 bg-slate-800/50 border border-white/5 rounded-lg focus-within:border-blue-500/50 transition-all">
+                  <span className="text-slate-500 group-focus-within/input:text-blue-400 transition-colors"><BookOpen size={18} /></span>
+                  <select 
+                    className="bg-transparent border-none outline-none w-full font-mono appearance-none"
+                    value={formData.department}
+                    onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                  >
+                    {['Instrumentation Engineering', 'Civil Engineering', 'Computer Science and Engineering', 'Mechanical Engineering', 'Electrical', 'Electronics Engineering'].map(dept => (
+                      <option key={dept} value={dept} className="bg-slate-900">{dept}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="group/input text-sm">
+                <div className="flex items-center gap-3 px-4 py-3 bg-slate-800/50 border border-white/5 rounded-lg focus-within:border-blue-500/50 transition-all">
                   <span className="text-slate-500 group-focus-within/input:text-blue-400 transition-colors"><Calendar size={18} /></span>
                   <select 
                     className="bg-transparent border-none outline-none w-full font-mono appearance-none"
@@ -94,11 +115,74 @@ const Register = () => {
                   </select>
                 </div>
               </div>
+
+              <div className="group/input text-sm">
+                <div className="flex items-center gap-3 px-4 py-3 bg-slate-800/50 border border-white/5 rounded-lg focus-within:border-blue-500/50 transition-all">
+                  <span className="text-slate-500 group-focus-within/input:text-blue-400 transition-colors"><Phone size={18} /></span>
+                  <input
+                    required
+                    type="tel"
+                    placeholder="Phone Number"
+                    className="bg-transparent border-none outline-none w-full font-mono placeholder:text-slate-600"
+                    value={formData.phoneNumber}
+                    onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
-          <button className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-lg transition-all flex items-center justify-center gap-3 group/btn uppercase tracking-widest italic mt-8">
-            Execute_Registration
+          <div className="space-y-4 pt-6 mt-6 border-t border-white/5">
+            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 italic">Verify_Identity_Bio</h3>
+            <div className="relative group/camera rounded-xl overflow-hidden bg-slate-800/50 border border-white/5 aspect-video flex items-center justify-center">
+              {!imgSrc ? (
+                <>
+                  <Webcam
+                    audio={false}
+                    ref={webcamRef}
+                    screenshotFormat="image/jpeg"
+                    className="w-full h-full object-cover"
+                    videoConstraints={{ facingMode: "user" }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent flex items-end justify-center pb-6">
+                    <button
+                      type="button"
+                      onClick={capture}
+                      className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-black text-[10px] uppercase tracking-widest transition-all shadow-xl"
+                    >
+                      <Camera size={16} />
+                      Capture_Visual_ID
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <img src={imgSrc} alt="Capture" className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent flex items-end justify-center pb-6 gap-4">
+                    <div className="px-4 py-2 bg-emerald-500/20 border border-emerald-500/50 rounded-full text-emerald-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 backdrop-blur-sm">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      Visual_Fixed
+                    </div>
+                    <button
+                      type="button"
+                      onClick={retake}
+                      className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border border-white/5 flex items-center gap-2 backdrop-blur-sm"
+                    >
+                      <RotateCcw size={14} />
+                      Re-scan
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+
+          <button 
+            type="submit"
+            disabled={!formData.profilePhoto}
+            className={`w-full ${!formData.profilePhoto ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500 text-white'} font-black py-4 rounded-lg transition-all flex items-center justify-center gap-3 group/btn uppercase tracking-widest italic mt-8`}
+          >
+            {formData.profilePhoto ? 'Execute_Registration' : 'Capture_Visual_To_Initialize'}
             <ChevronRight className="group-hover/btn:translate-x-1 transition-transform" />
           </button>
         </form>
