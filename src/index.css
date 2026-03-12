@@ -9,10 +9,15 @@
   color: #f8fafc;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
 }
 
 .font-mono {
