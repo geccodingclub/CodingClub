@@ -3,11 +3,14 @@ import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
 import { motion } from 'framer-motion';
 import { CheckCircle, Clock, ShieldCheck, Users, Search, Code, Cpu, Terminal as TerminalIcon, Plus, X } from 'lucide-react';
+import { useNotification } from '../context/NotificationContext';
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const { showNotification } = useNotification();
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(false);
+
 
   const [events, setEvents] = useState([]);
   const [members, setMembers] = useState([]);
@@ -56,19 +59,20 @@ const Dashboard = () => {
     try {
       await API.patch(`/users/verify/${id}`);
       setStudents(students.map(s => s._id === id ? { ...s, isVerified: true } : s));
+      showNotification('Sector verified successfully');
     } catch (err) {
-      alert('Verification failed');
+      showNotification('Verification protocol failed', 'error');
     }
   };
 
   const handleAssignRole = async (userId, role) => {
     try {
       await API.post('/users/assign-role', { userId, role });
-      alert('Role updated successfully');
+      showNotification(`Role updated to ${role}`);
       fetchMembers();
       fetchStudents();
     } catch (err) {
-      alert(err.response?.data?.message || 'Update failed');
+      showNotification(err.response?.data?.message || 'Access level update failed', 'error');
     }
   };
 
@@ -79,18 +83,21 @@ const Dashboard = () => {
       setShowEventModal(false);
       setNewEvent({ title: '', description: '', date: '', location: '' });
       fetchEvents();
-      alert('Event deployed successfully');
+      showNotification('Event nexus deployed successfully');
     } catch (err) {
-      alert('Failed to deploy event');
+      showNotification('Event deployment failed', 'error');
     }
   };
 
   const handleDeleteEvent = async (id) => {
-    if (!window.confirm('Delete event?')) return;
+    if (!window.confirm('Terminate event deployment?')) return;
     try {
       await API.delete(`/events/${id}`);
       fetchEvents();
-    } catch (err) { alert('Delete failed'); }
+      showNotification('Event termination successful');
+    } catch (err) { 
+      showNotification('Event termination failed', 'error'); 
+    }
   };
 
   if (!user) return null;

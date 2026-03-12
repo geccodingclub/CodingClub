@@ -1,10 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { NotificationProvider } from './context/NotificationContext';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import NotFound from './pages/NotFound';
 import Background from './components/Background';
 import Navbar from './components/Navbar';
 import './index.css';
@@ -41,6 +43,7 @@ const AnimatedRoutes = () => {
             <PageWrapper><Dashboard /></PageWrapper>
           </ProtectedRoute>
         } />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </AnimatePresence>
   );
@@ -49,13 +52,15 @@ const AnimatedRoutes = () => {
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <div className="min-h-screen relative text-slate-100 selection:bg-blue-500/30 overflow-x-hidden">
-          <Background />
-          <Navbar />
-          <AnimatedRoutes />
-        </div>
-      </BrowserRouter>
+      <NotificationProvider>
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <div className="min-h-screen relative text-slate-100 selection:bg-blue-500/30 overflow-x-hidden">
+            <Background />
+            <Navbar />
+            <AnimatedRoutes />
+          </div>
+        </BrowserRouter>
+      </NotificationProvider>
     </AuthProvider>
   );
 }

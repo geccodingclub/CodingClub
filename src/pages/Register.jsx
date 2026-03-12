@@ -3,22 +3,25 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 import { User, Mail, Lock, Fingerprint, BookOpen, Calendar, ChevronRight } from 'lucide-react';
+import { useNotification } from '../context/NotificationContext';
 
 const Register = () => {
   const [formData, setFormData] = useState({
     name: '', email: '', password: '', collegeId: '', department: '', year: 1
   });
   const { register } = useAuth();
+  const { showNotification } = useNotification();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await register(formData);
+      showNotification('Identity record created. Welcome to the club.');
       navigate('/dashboard');
     } catch (err) {
-      const msg = err.response?.data?.message || err.response?.data?.error || 'Registration failed';
-      alert(msg);
+      const msg = err.response?.data?.message || err.response?.data?.error || 'Registration sequence failure';
+      showNotification(msg, 'error');
     }
   };
 

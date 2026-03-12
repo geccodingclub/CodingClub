@@ -3,20 +3,23 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 import { Mail, Lock, ChevronRight, Terminal as TerminalIcon } from 'lucide-react';
+import { useNotification } from '../context/NotificationContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useAuth();
+  const { showNotification } = useNotification();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await login(email, password);
+      showNotification('Access authorized. Welcome back.');
       navigate('/dashboard');
     } catch (err) {
-      alert(err.response?.data?.message || 'Login failed');
+      showNotification(err.response?.data?.message || 'Authorization failed. Check credentials.', 'error');
     }
   };
 
