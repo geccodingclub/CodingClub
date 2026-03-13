@@ -42,6 +42,9 @@ const Navbar = () => {
             <Link to="/events" className="hover:text-blue-400 transition-colors py-2 underline-offset-8 hover:underline">
               Events
             </Link>
+            <Link to="/notices" className="hover:text-blue-400 transition-colors py-2 underline-offset-8 hover:underline">
+              Notices
+            </Link>
             <Link to="/members" className="hover:text-blue-400 transition-colors py-2 underline-offset-8 hover:underline">
               Members
             </Link>
@@ -98,6 +101,9 @@ const Navbar = () => {
                   </Link>
                   <Link to="/events" onClick={closeMenu} className="block p-4 rounded-xl bg-white/5 border border-white/5 text-slate-300">
                     Events
+                  </Link>
+                  <Link to="/notices" onClick={closeMenu} className="block p-4 rounded-xl bg-white/5 border border-white/5 text-slate-300">
+                    Notices
                   </Link>
                   <Link to="/members" onClick={closeMenu} className="block p-4 rounded-xl bg-white/5 border border-white/5 text-slate-300">
                     Members

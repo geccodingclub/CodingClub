@@ -11,6 +11,7 @@ const Footer = () => {
             links: [
                 { name: 'About Club', path: '/about' },
                 { name: 'Events', path: '/events' },
+                { name: 'Notices', path: '/notices' },
                 { name: 'Members', path: '/members' },
                 { name: 'Leaderboard', path: '/dashboard' },
             ]
@@ -111,11 +112,17 @@ const Footer = () => {
                     <p className="text-slate-500 font-mono text-[10px] uppercase tracking-widest">
                         © {currentYear} CODING_CLUB_GEC. SYSTEM_VERSION: 2.0.0
                     </p>
-                    <div className="flex items-center gap-2 text-slate-500 font-mono text-[10px] uppercase tracking-widest">
-                        <span>Made with</span>
-                        <Heart size={10} className="text-red-500 animate-pulse" fill="currentColor" />
-                        <span>for the future</span>
-                    </div>
+                    <a 
+                        href="https://github.com/Abudarda12" 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="flex items-center gap-2 text-slate-500 hover:text-blue-400 transition-colors font-mono text-[10px] uppercase tracking-widest group"
+                    >
+                        <span>made with</span>
+                        <Heart size={10} className="text-red-500 animate-pulse group-hover:scale-125 transition-transform" fill="currentColor" />
+                        <span>love by Abudarda</span>
+                        <ArrowUpRight size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </a>
                 </div>
             </div>
         </footer>
