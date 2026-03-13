@@ -16,6 +16,7 @@ import NotFound from './pages/NotFound';
 import Background from './components/Background';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import NoticePage from './pages/NoticePage';
 import './index.css';
 
 const ProtectedRoute = ({ children, roles }) => {
