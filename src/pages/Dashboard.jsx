@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
 import { motion } from 'framer-motion';
-import { CheckCircle, Clock, ShieldCheck, Users, Search, Code, Cpu, Terminal as TerminalIcon, Plus, X, Rocket, Power } from 'lucide-react';
+import { CheckCircle, Clock, ShieldCheck, Users, Search, Code, Cpu, Terminal as TerminalIcon, Plus, X, Rocket, Power, Megaphone, Trash2, AlertTriangle } from 'lucide-react';
 import { useNotification } from '../context/NotificationContext';
 import MemberCard from '../components/MemberCard';
 import { User as UserIcon } from 'lucide-react';
@@ -20,6 +20,9 @@ const Dashboard = () => {
   const [showCardModal, setShowCardModal] = useState(false);
   const [newEvent, setNewEvent] = useState({ title: '', description: '', date: '', location: '' });
   const [processing, setProcessing] = useState(false);
+  const [showNoticeModal, setShowNoticeModal] = useState(false);
+  const [notices, setNotices] = useState([]);
+  const [newNotice, setNewNotice] = useState({ title: '', content: '', isImportant: false });
 
   useEffect(() => {
     if (user && (user.role === 'VOLUNTEER' || user.role === 'PRESIDENT')) {
@@ -30,6 +33,7 @@ const Dashboard = () => {
     }
     if (user) {
       fetchEvents();
+      fetchNotices();
     }
   }, [user]);
 
@@ -44,6 +48,13 @@ const Dashboard = () => {
     try {
       const res = await API.get('/events');
       setEvents(res.data);
+    } catch (err) { console.error(err); }
+  };
+
+  const fetchNotices = async () => {
+    try {
+      const res = await API.get('/notices');
+      setNotices(res.data);
     } catch (err) { console.error(err); }
   };
 
@@ -124,6 +135,36 @@ const Dashboard = () => {
       showNotification('Event visibility toggled');
     } catch (err) {
       showNotification('Launch protocol failed', 'error');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleCreateNotice = async (e) => {
+    e.preventDefault();
+    setProcessing(true);
+    try {
+      await API.post('/notices/fire-up', newNotice);
+      setShowNoticeModal(false);
+      setNewNotice({ title: '', content: '', isImportant: false });
+      fetchNotices();
+      showNotification('Broadcast fired up successfully! Emails sent to Nexus.');
+    } catch (err) {
+      showNotification('Broadcast system offline', 'error');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleDeleteNotice = async (id) => {
+    if (!window.confirm('Retract this broadcast?')) return;
+    setProcessing(true);
+    try {
+      await API.delete(`/notices/${id}`);
+      fetchNotices();
+      showNotification('Broadcast retracted');
+    } catch (err) {
+      showNotification('Retraction failed', 'error');
     } finally {
       setProcessing(false);
     }
@@ -330,6 +371,51 @@ const Dashboard = () => {
                   )}
                 </div>
               </div>
+
+              {/* Notice Management Console */}
+              <div className="bg-slate-900/60 backdrop-blur-xl rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
+                <div className="p-6 border-b border-white/5 flex justify-between items-center bg-white/5">
+                  <h2 className="text-sm font-black uppercase tracking-widest italic flex items-center gap-2">
+                    <Megaphone size={16} className="text-red-500" />
+                    Notice_Broadcast_Console
+                  </h2>
+                  <button 
+                    onClick={() => setShowNoticeModal(true)}
+                    className="bg-red-600 hover:bg-red-500 text-white font-black px-4 py-2 rounded text-[10px] uppercase transition-all italic tracking-widest flex items-center gap-2 shadow-[0_0_20px_rgba(239,68,68,0.2)]"
+                  >
+                    <Plus size={14} />
+                    Fire_Up_Notice
+                  </button>
+                </div>
+                <div className="p-6 space-y-4">
+                  {notices.length > 0 ? notices.map((notice) => (
+                    <div key={notice._id} className={`p-4 rounded-xl border transition-all flex justify-between items-center ${notice.isImportant ? 'bg-red-500/5 border-red-500/20' : 'bg-white/5 border-white/5'}`}>
+                      <div className="flex items-center gap-4">
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${notice.isImportant ? 'bg-red-500/20 text-red-500 animate-pulse' : 'bg-slate-800 text-slate-500'}`}>
+                          <Megaphone size={18} />
+                        </div>
+                        <div>
+                          <h4 className={`font-black uppercase tracking-tight ${notice.isImportant ? 'text-red-400' : 'text-slate-200'}`}>
+                            {notice.title}
+                          </h4>
+                          <p className="text-[10px] font-mono text-slate-500 mt-1">
+                            {new Date(notice.createdAt).toLocaleDateString()} | {notice.isImportant ? 'PRIORITY_ALPHA' : 'STANDARD_BROADCAST'}
+                          </p>
+                        </div>
+                      </div>
+                      <button 
+                        disabled={processing}
+                        onClick={() => handleDeleteNotice(notice._id)}
+                        className={`${processing ? 'text-slate-700' : 'text-slate-600 hover:text-red-500'} transition-colors ml-4`}
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  )) : (
+                    <p className="text-slate-500 font-mono text-xs uppercase tracking-widest">No_Active_Broadcasts</p>
+                  )}
+                </div>
+              </div>
             </div>
           )}
 
@@ -401,6 +487,76 @@ const Dashboard = () => {
                     className={`w-full ${processing ? 'bg-slate-800 text-slate-600 cursor-not-allowed' : 'bg-purple-600 hover:bg-purple-500 text-white'} font-black py-4 rounded-xl shadow-[0_10px_30px_rgba(147,51,234,0.3)] transition-all uppercase italic tracking-widest mt-4`}
                   >
                     {processing ? 'DEPLOYING_NEXUS...' : 'Authorize_Deployment'}
+                  </button>
+                </form>
+              </motion.div>
+            </div>
+          )}
+          {/* Notice Creation Modal */}
+          {showNoticeModal && (
+            <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-slate-900 border border-white/10 p-8 rounded-2xl w-full max-w-md relative overflow-hidden"
+              >
+                <div className="absolute top-0 left-0 w-full h-1 bg-red-600" />
+                <button 
+                  onClick={() => setShowNoticeModal(false)}
+                  className="absolute top-4 right-4 text-slate-500 hover:text-white"
+                >
+                  <X size={20} />
+                </button>
+                <h2 className="text-xl font-black italic uppercase tracking-tighter mb-8">Fire_Up<span className="text-red-500">_Nexus_Broadcast</span></h2>
+                
+                <form onSubmit={handleCreateNotice} className="space-y-6 font-mono text-xs">
+                  <div className="space-y-2">
+                    <label className="text-slate-500 uppercase tracking-widest">Broadcast_Title</label>
+                    <input 
+                      type="text" 
+                      required
+                      className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-slate-200 focus:border-red-500 outline-none transition-all"
+                      placeholder="URGENT_UPDATE_01"
+                      value={newNotice.title}
+                      onChange={(e) => setNewNotice({...newNotice, title: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-slate-500 uppercase tracking-widest">Message_Payload</label>
+                    <textarea 
+                      required
+                      className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-slate-200 focus:border-red-500 outline-none transition-all min-h-[120px]"
+                      placeholder="INPUT_BROADCAST_DETAILS..."
+                      value={newNotice.content}
+                      onChange={(e) => setNewNotice({...newNotice, content: e.target.value})}
+                    />
+                  </div>
+                  <div className="flex items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/10">
+                    <input 
+                      type="checkbox"
+                      id="isImportant"
+                      className="w-4 h-4 accent-red-600"
+                      checked={newNotice.isImportant}
+                      onChange={(e) => setNewNotice({...newNotice, isImportant: e.target.checked})}
+                    />
+                    <label htmlFor="isImportant" className="text-slate-300 font-black uppercase tracking-widest flex items-center gap-2 cursor-pointer">
+                      <AlertTriangle size={14} className="text-amber-500" />
+                      Priority_Alpha
+                    </label>
+                  </div>
+                  
+                  <div className="p-4 bg-red-500/10 rounded-lg border border-red-500/20">
+                    <p className="text-[10px] text-red-400 font-mono leading-relaxed uppercase">
+                      // WARNING: Executing 'Fire_Up' will broadcast this notice via Nexus email to every verified member. Verify payload integrity before authorization.
+                    </p>
+                  </div>
+
+                  <button 
+                    type="submit"
+                    disabled={processing}
+                    className={`w-full ${processing ? 'bg-slate-800 text-slate-600' : 'bg-red-600 hover:bg-red-500 text-white'} font-black py-4 rounded-xl shadow-[0_10px_30px_rgba(239,68,68,0.3)] transition-all uppercase italic tracking-widest mt-4`}
+                  >
+                    {processing ? 'FIRE_UP_IN_PROGRESS...' : 'Authorize_Broadcast'}
                   </button>
                 </form>
               </motion.div>

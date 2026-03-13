@@ -48,6 +48,11 @@ const AnimatedRoutes = () => {
         <Route path="/about" element={<PageWrapper><About /></PageWrapper>} />
         <Route path="/events" element={<PageWrapper><EventsPage /></PageWrapper>} />
         <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />
+        <Route path="/notices" element={
+          <ProtectedRoute>
+            <PageWrapper><NoticePage /></PageWrapper>
+          </ProtectedRoute>
+        } />
         <Route path="/members" element={
           <ProtectedRoute>
             <PageWrapper><VerifiedID /></PageWrapper>
