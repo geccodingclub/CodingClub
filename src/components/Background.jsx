@@ -15,7 +15,7 @@ const Background = () => {
           y: [0, -50, 0]
         }}
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/20 blur-[120px] rounded-full"
+        className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/20 blur-[80px] rounded-full"
       />
       <motion.div 
         animate={{ 
@@ -25,7 +25,7 @@ const Background = () => {
           y: [0, 50, 0]
         }}
         transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-500/20 blur-[120px] rounded-full"
+        className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-500/20 blur-[80px] rounded-full"
       />
 
       {/* Floating Code Icons (Subtle) */}
