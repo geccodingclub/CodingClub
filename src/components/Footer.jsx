@@ -19,7 +19,7 @@ const Footer = () => {
         {
             title: 'Resources',
             links: [
-                { name: 'Documentation', path: 'https://github.com/geccodingclub' },
+                { name: 'Resources', path: '/resources' },
                 { name: 'Open Source', path: 'https://github.com/geccodingclub' },
                 { name: 'Community', path: '#' },
                 { name: 'Contact Us', path: '/contact' }

@@ -5,8 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { User, Mail, Lock, Fingerprint, BookOpen, Calendar, ChevronRight, Phone, Camera, RotateCcw, Upload, Image as ImageIcon } from 'lucide-react';
 import { useNotification } from '../context/NotificationContext';
 import Webcam from 'react-webcam';
+import ImageCropper from '../components/ImageCropper';
 
 const DEPARTMENTS = [
+  'Select Department',
   'Instrumentation Engineering',
   'Civil Engineering',
   'Computer Science and Engineering',
@@ -22,6 +24,8 @@ const Register = () => {
   const webcamRef = useRef(null);
   const fileInputRef = useRef(null);
   const [imgSrc, setImgSrc] = useState(null);
+  const [tempImg, setTempImg] = useState(null);
+  const [showCropper, setShowCropper] = useState(false);
   const [uploadMode, setUploadMode] = useState('gallery'); // 'camera' or 'gallery'
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -68,8 +72,8 @@ const Register = () => {
 
   const capture = useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot();
-    setImgSrc(imageSrc);
-    setFormData(prev => ({ ...prev, profilePhoto: imageSrc }));
+    setTempImg(imageSrc);
+    setShowCropper(true);
   }, [webcamRef]);
 
   const handleGalleryUpload = (e) => {
@@ -77,11 +81,17 @@ const Register = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImgSrc(reader.result);
-        setFormData(prev => ({ ...prev, profilePhoto: reader.result }));
+        setTempImg(reader.result);
+        setShowCropper(true);
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleCropComplete = (croppedImage) => {
+    setImgSrc(croppedImage);
+    setFormData(prev => ({ ...prev, profilePhoto: croppedImage }));
+    setShowCropper(false);
   };
 
   const retake = () => {
@@ -185,7 +195,7 @@ const Register = () => {
                     onChange={(e) => setFormData(prev => ({ ...prev, department: e.target.value }))}
                   >
                     {DEPARTMENTS.map(dept => (
-                      <option key={dept} value={dept} className="bg-slate-900">{dept}</option>
+                      <option key={dept} value={dept} disabled={dept === 'Select Department'} className="bg-slate-900">{dept}</option>
                     ))}
                   </select>
                 </div>
@@ -198,7 +208,8 @@ const Register = () => {
                     value={formData.year}
                     onChange={(e) => setFormData(prev => ({ ...prev, year: parseInt(e.target.value) }))}
                   >
-                    {[1,2,3,4].map(y => <option key={y} value={y} className="bg-slate-900">{y} Year</option>)}
+                    <option value="1" disabled className="bg-slate-900">Select Year</option>
+                    {[1,2,3,4].map(y => <option key={y} value={y} className="bg-slate-900">{y} Year</option>)}  
                   </select>
                 </div>
               </div>
@@ -330,6 +341,16 @@ const Register = () => {
           ALREADY_MEMBER? <Link to="/login" className="text-blue-400 hover:underline hover:text-blue-300">AUTH_NOW</Link>
         </p>
       </motion.div>
+
+      <AnimatePresence>
+        {showCropper && (
+          <ImageCropper 
+            image={tempImg} 
+            onCropComplete={handleCropComplete} 
+            onCancel={() => setShowCropper(false)} 
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

@@ -5,7 +5,8 @@ import { motion } from 'framer-motion';
 import { CheckCircle, Clock, ShieldCheck, Users, Search, Code, Cpu, Terminal as TerminalIcon, Plus, X, Rocket, Power, Megaphone, Trash2, AlertTriangle } from 'lucide-react';
 import { useNotification } from '../context/NotificationContext';
 import MemberCard from '../components/MemberCard';
-import { User as UserIcon } from 'lucide-react';
+import EditProfileModal from '../components/EditProfileModal';
+import { User as UserIcon, Settings } from 'lucide-react';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -21,6 +22,7 @@ const Dashboard = () => {
   const [newEvent, setNewEvent] = useState({ title: '', description: '', date: '', location: '' });
   const [processing, setProcessing] = useState(false);
   const [showNoticeModal, setShowNoticeModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [notices, setNotices] = useState([]);
   const [newNotice, setNewNotice] = useState({ title: '', content: '', isImportant: false });
 
@@ -657,6 +659,13 @@ const Dashboard = () => {
                 <ShieldCheck size={14} className="group-hover/id:scale-110 transition-transform" />
                 View_Member_ID
               </button>
+              <button 
+                onClick={() => setShowEditModal(true)}
+                className="mt-2 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-blue-400 transition-colors flex items-center gap-2 group/edit"
+              >
+                <Settings size={14} className="group-hover/edit:rotate-90 transition-transform duration-500" />
+                Edit_Profile
+              </button>
             </div>
 
             <h3 className="text-xs font-black uppercase tracking-[0.3em] text-slate-500 mb-10 italic underline underline-offset-8 decoration-blue-500/50">
@@ -682,22 +691,29 @@ const Dashboard = () => {
 
       {/* Member Card Modal */}
       {showCardModal && (
-        <div className="fixed inset-0 bg-black/90 backdrop-blur-xl z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/95 backdrop-blur-2xl z-50 overflow-y-auto flex flex-col p-4 sm:p-8">
           <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="relative"
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="my-auto relative flex flex-col items-center w-full mx-auto max-w-md"
           >
             <button 
               onClick={() => setShowCardModal(false)}
-              className="absolute -top-12 right-0 text-white/50 hover:text-white flex items-center gap-2 uppercase font-mono text-xs tracking-widest"
+              className="mb-6 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-white/50 hover:text-white flex items-center gap-2 uppercase font-mono text-[10px] sm:text-xs tracking-[0.2em] transition-all backdrop-blur-md sticky top-4 z-50"
             >
-              Close_Console <X size={20} />
+              <X size={16} /> Exit_Visualizer
             </button>
-            <MemberCard user={user} />
+            <div className="w-full">
+              <MemberCard user={user} />
+            </div>
           </motion.div>
         </div>
       )}
+
+      <EditProfileModal 
+        isOpen={showEditModal} 
+        onClose={() => setShowEditModal(false)} 
+      />
     </div>
   );
 };
