@@ -100,10 +100,10 @@ const Landing = () => {
       <section className="py-20 border-y border-slate-800/50 bg-slate-950/20 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
           {[
-            { label: 'Lines of Code', value: '1.2M+' },
-            { label: 'Hackathons', value: '24' },
+            { label: 'Lines of Code', value: '1K+' },
+            { label: 'Hackathons', value: '2' },
             { label: 'Active Members', value: `${stats.verifiedCount}+` },
-            { label: 'Projects Shipped', value: '150+' }
+            { label: 'Projects Shipped', value: '1+' }
           ].map((stat, i) => (
             <motion.div 
               key={i}

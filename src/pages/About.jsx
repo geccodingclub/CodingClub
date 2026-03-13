@@ -22,10 +22,8 @@ const About = () => {
     ];
 
     const stats = [
-        { label: "Community Members", value: "800+" },
-        { label: "Open Source Projects", value: "45+" },
-        { label: "Hackathons Hosted", value: "12" },
-        { label: "Career Placements", value: "100%" }
+        { label: "Open Source Projects", value: "1+" },
+        { label: "Hackathons Hosted", value: "2" }
     ];
 
     return (

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
 import { motion } from 'framer-motion';
-import { CheckCircle, Clock, ShieldCheck, Users, Search, Code, Cpu, Terminal as TerminalIcon, Plus, X } from 'lucide-react';
+import { CheckCircle, Clock, ShieldCheck, Users, Search, Code, Cpu, Terminal as TerminalIcon, Plus, X, Rocket, Power } from 'lucide-react';
 import { useNotification } from '../context/NotificationContext';
 import MemberCard from '../components/MemberCard';
 import { User as UserIcon } from 'lucide-react';
@@ -111,6 +111,19 @@ const Dashboard = () => {
       showNotification('Event termination successful');
     } catch (err) { 
       showNotification('Event termination failed', 'error'); 
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleToggleLaunch = async (id) => {
+    setProcessing(true);
+    try {
+      await API.patch(`/events/launch/${id}`);
+      fetchEvents();
+      showNotification('Event visibility toggled');
+    } catch (err) {
+      showNotification('Launch protocol failed', 'error');
     } finally {
       setProcessing(false);
     }
@@ -283,17 +296,33 @@ const Dashboard = () => {
                 </div>
                 <div className="p-6 grid md:grid-cols-2 gap-4">
                   {events.length > 0 ? events.map((event) => (
-                    <div key={event._id} className="p-4 rounded-xl bg-white/5 border border-white/5 hover:border-purple-500/30 transition-all flex justify-between items-start">
-                      <div>
-                        <h4 className="font-black text-slate-200 uppercase tracking-tight">{event.title}</h4>
-                        <p className="text-[10px] font-mono text-slate-500 mt-1">{new Date(event.date).toLocaleDateString()} @ {event.location}</p>
+                    <div key={event._id} className="p-4 rounded-xl bg-white/5 border border-white/5 hover:border-purple-500/30 transition-all flex justify-between items-center">
+                      <div className="flex items-center gap-4">
+                        <button
+                          disabled={processing}
+                          onClick={() => handleToggleLaunch(event._id)}
+                          className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all border ${
+                            event.isLaunched 
+                            ? 'bg-green-500/20 border-green-500/50 text-green-400 shadow-[0_0_15px_rgba(34,197,94,0.2)]' 
+                            : 'bg-slate-800 border-white/10 text-slate-500 grayscale'
+                          }`}
+                          title={event.isLaunched ? 'Active_on_Nexus' : 'In_Draft_Mode'}
+                        >
+                          <Rocket size={18} className={event.isLaunched ? 'animate-pulse' : ''} />
+                        </button>
+                        <div>
+                          <h4 className="font-black text-slate-200 uppercase tracking-tight">{event.title}</h4>
+                          <p className="text-[10px] font-mono text-slate-500 mt-1">
+                            {new Date(event.date).toLocaleDateString()} @ {event.location} | {event.isLaunched ? 'LIVE' : 'DRAFT'}
+                          </p>
+                        </div>
                       </div>
                       <button 
                         disabled={processing}
                         onClick={() => handleDeleteEvent(event._id)}
-                        className={`${processing ? 'text-slate-700 cursor-not-allowed' : 'text-slate-600 hover:text-red-500'} transition-colors`}
+                        className={`${processing ? 'text-slate-700 cursor-not-allowed' : 'text-slate-600 hover:text-red-500'} transition-colors ml-4`}
                       >
-                        <Clock size={16} />
+                        <X size={18} />
                       </button>
                     </div>
                   )) : (

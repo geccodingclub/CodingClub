@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Search, ShieldCheck, User, Binary, Filter, Globe, Loader2, Award } from 'lucide-react';
-import axios from 'axios';
+import API from '../api/axios';
 
 const VerifiedID = () => {
     const [members, setMembers] = useState([]);
@@ -12,7 +12,7 @@ const VerifiedID = () => {
     useEffect(() => {
         const fetchMembers = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL || 'https://coding-r06j.onrender.com'}/api/users/public-verified`);
+                const response = await API.get('/users/verified-directory');
                 setMembers(response.data);
             } catch (error) {
                 console.error('Failed to fetch verified members:', error);
