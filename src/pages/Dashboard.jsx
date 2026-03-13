@@ -125,10 +125,18 @@ const Dashboard = () => {
            <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-600/20 rounded-xl flex items-center justify-center text-blue-500 border border-blue-500/30">
              <TerminalIcon size={20} className="md:w-6 md:h-6" />
            </div>
-           <div>
-             <h1 className="text-2xl md:text-4xl font-black italic tracking-tighter uppercase leading-none">Console<span className="text-blue-500">_Output</span></h1>
-             <p className="text-slate-500 font-mono text-[10px] md:text-xs mt-1 uppercase tracking-widest">// Logged in as: {user.name} ({user.role})</p>
-           </div>
+            <div>
+              <h1 className="text-2xl md:text-4xl font-black italic tracking-tighter uppercase leading-none">Console<span className="text-blue-500">_Output</span></h1>
+              <div className="flex items-center gap-4 mt-1">
+                <p className="text-slate-500 font-mono text-[10px] md:text-xs uppercase tracking-widest">// Logged in as: {user.name} ({user.role})</p>
+                <button 
+                  onClick={() => setShowCardModal(true)}
+                  className="px-2 py-0.5 bg-blue-600/10 border border-blue-500/30 rounded text-[8px] md:text-[10px] font-black uppercase tracking-widest text-blue-400 hover:bg-blue-600 hover:text-white transition-all italic"
+                >
+                  View_ID_Nexus
+                </button>
+              </div>
+            </div>
         </div>
       </header>
 
