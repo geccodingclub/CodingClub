@@ -8,9 +8,14 @@ import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import About from './pages/About';
+import EventsPage from './pages/EventsPage';
+import Contact from './pages/Contact';
+import VerifiedID from './pages/VerifiedID';
 import NotFound from './pages/NotFound';
 import Background from './components/Background';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import './index.css';
 
 const ProtectedRoute = ({ children, roles }) => {
@@ -40,6 +45,10 @@ const AnimatedRoutes = () => {
         <Route path="/" element={<PageWrapper><Landing /></PageWrapper>} />
         <Route path="/login" element={<PageWrapper><Login /></PageWrapper>} />
         <Route path="/register" element={<PageWrapper><Register /></PageWrapper>} />
+        <Route path="/about" element={<PageWrapper><About /></PageWrapper>} />
+        <Route path="/events" element={<PageWrapper><EventsPage /></PageWrapper>} />
+        <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />
+        <Route path="/members" element={<PageWrapper><VerifiedID /></PageWrapper>} />
         <Route path="/dashboard" element={
           <ProtectedRoute>
             <PageWrapper><Dashboard /></PageWrapper>
@@ -78,10 +87,13 @@ function App() {
     <AuthProvider>
       <NotificationProvider>
         <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-          <div className="min-h-screen relative text-slate-100 selection:bg-blue-500/30 overflow-x-hidden">
+          <div className="min-h-screen relative text-slate-100 selection:bg-blue-500/30 overflow-x-hidden flex flex-col">
             <Background />
             <Navbar />
-            <AnimatedRoutes />
+            <div className="flex-grow">
+              <AnimatedRoutes />
+            </div>
+            <Footer />
           </div>
         </BrowserRouter>
       </NotificationProvider>

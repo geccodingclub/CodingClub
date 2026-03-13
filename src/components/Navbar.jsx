@@ -36,6 +36,18 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8 font-mono text-xs font-bold uppercase tracking-widest">
+            <Link to="/about" className="hover:text-blue-400 transition-colors py-2 underline-offset-8 hover:underline">
+              About
+            </Link>
+            <Link to="/events" className="hover:text-blue-400 transition-colors py-2 underline-offset-8 hover:underline">
+              Events
+            </Link>
+            <Link to="/members" className="hover:text-blue-400 transition-colors py-2 underline-offset-8 hover:underline">
+              Members
+            </Link>
+            <Link to="/contact" className="hover:text-blue-400 transition-colors py-2 underline-offset-8 hover:underline">
+              Contact
+            </Link>
             {user ? (
               <>
                 <Link to="/dashboard" className="flex items-center gap-2 hover:text-blue-400 transition-colors py-2">
@@ -81,16 +93,28 @@ const Navbar = () => {
             className="md:hidden border-t border-white/5 bg-slate-900/90 backdrop-blur-2xl overflow-hidden"
           >
             <div className="px-4 py-8 space-y-4 font-mono text-sm uppercase tracking-[0.2em] font-black italic">
-              {user ? (
-                <>
-                  <Link 
-                    to="/dashboard" 
-                    onClick={closeMenu}
-                    className="flex items-center gap-4 p-4 rounded-xl bg-blue-600/10 border border-blue-500/20 text-blue-400"
-                  >
-                    <LayoutDashboard size={20} />
-                    Dashboard
+                  <Link to="/about" onClick={closeMenu} className="block p-4 rounded-xl bg-white/5 border border-white/5 text-slate-300">
+                    About
                   </Link>
+                  <Link to="/events" onClick={closeMenu} className="block p-4 rounded-xl bg-white/5 border border-white/5 text-slate-300">
+                    Events
+                  </Link>
+                  <Link to="/members" onClick={closeMenu} className="block p-4 rounded-xl bg-white/5 border border-white/5 text-slate-300">
+                    Members
+                  </Link>
+                  <Link to="/contact" onClick={closeMenu} className="block p-4 rounded-xl bg-white/5 border border-white/5 text-slate-300">
+                    Contact
+                  </Link>
+                  {user ? (
+                    <>
+                      <Link 
+                        to="/dashboard" 
+                        onClick={closeMenu}
+                        className="flex items-center gap-4 p-4 rounded-xl bg-blue-600/10 border border-blue-500/20 text-blue-400"
+                      >
+                        <LayoutDashboard size={20} />
+                        Dashboard
+                      </Link>
                   <button 
                     onClick={handleLogout}
                     className="w-full flex items-center gap-4 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500"

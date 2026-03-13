@@ -2,8 +2,24 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Code2, Users, Trophy, ChevronRight, Binary, Cpu, Globe } from 'lucide-react';
 import Terminal from '../components/Terminal';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const Landing = () => {
+  const [stats, setStats] = useState({ verifiedCount: 0 });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL || 'https://coding-r06j.onrender.com'}/api/users/public-stats`);
+        setStats(response.data);
+      } catch (error) {
+        console.error('Failed to fetch stats:', error);
+      }
+    };
+    fetchStats();
+  }, []);
+
   return (
     <div className="relative">
       {/* Hero Section */}
@@ -86,7 +102,7 @@ const Landing = () => {
           {[
             { label: 'Lines of Code', value: '1.2M+' },
             { label: 'Hackathons', value: '24' },
-            { label: 'Active Members', value: '800+' },
+            { label: 'Active Members', value: `${stats.verifiedCount}+` },
             { label: 'Projects Shipped', value: '150+' }
           ].map((stat, i) => (
             <motion.div 
