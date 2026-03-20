@@ -230,6 +230,7 @@ const Dashboard = () => {
                     <th className="px-6 py-4 uppercase tracking-widest">Entry_Name</th>
                     <th className="px-6 py-4 uppercase tracking-widest">Roll_No</th>
                     <th className="px-6 py-4 uppercase tracking-widest">Sector_Year</th>
+                    <th className="px-6 py-4 uppercase tracking-widest">Mobile_No</th>
                     <th className="px-6 py-4 uppercase tracking-widest">State</th>
                     <th className="px-6 py-4 uppercase tracking-widest text-right">Action</th>
                   </tr>
@@ -249,6 +250,7 @@ const Dashboard = () => {
                       <td className="px-6 py-4 font-bold text-slate-200">{student.name}</td>
                       <td className="px-6 py-4 text-slate-400 font-mono italic">{student.rollNo}</td>
                       <td className="px-6 py-4 text-slate-400">[{student.department}]_{student.year}y</td>
+                      <td className="px-6 py-4 text-slate-400">{student.phoneNumber}</td>
                       <td className="px-6 py-4">
                         {student.isVerified ? (
                           <span className="text-emerald-500 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 uppercase text-[10px] font-black tracking-widest">Verified</span>

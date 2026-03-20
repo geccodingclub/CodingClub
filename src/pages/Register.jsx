@@ -19,7 +19,7 @@ const DEPARTMENTS = [
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: '', email: '', password: '', rollNo: '', department: DEPARTMENTS[0], year: 1, phoneNumber: '', profilePhoto: ''
+    name: '', email: '', password: '', rollNo: '', department: DEPARTMENTS[0], year: 'Select Year', phoneNumber: '', profilePhoto: ''
   });
   const webcamRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -110,10 +110,6 @@ const Register = () => {
       return;
     }
 
-    if (!formData.profilePhoto) {
-      showNotification('Identity visual record required', 'error');
-      return;
-    }
     setIsSubmitting(true);
     try {
       await register(formData);
@@ -208,7 +204,7 @@ const Register = () => {
                     value={formData.year}
                     onChange={(e) => setFormData(prev => ({ ...prev, year: parseInt(e.target.value) }))}
                   >
-                    <option value="1" disabled className="bg-slate-900">Select Year</option>
+                    <option value="Select Year" disabled className="bg-slate-900">Select Year</option>
                     {[1,2,3,4].map(y => <option key={y} value={y} className="bg-slate-900">{y} Year</option>)}  
                   </select>
                 </div>
@@ -236,7 +232,7 @@ const Register = () => {
 
           <div className="space-y-4 pt-6 mt-6 border-t border-white/5">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 italic">Verify_Identity_Bio</h3>
+              <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 italic">Verify_Identity_Bio (Optional)</h3>
               <div className="flex bg-slate-800/50 p-1 rounded-lg border border-white/5">
                 <button
                   type="button"
@@ -329,10 +325,10 @@ const Register = () => {
 
           <button 
             type="submit"
-            disabled={!formData.profilePhoto || isSubmitting}
-            className={`w-full ${(!formData.profilePhoto || isSubmitting) ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500 text-white'} font-black py-4 rounded-lg transition-all flex items-center justify-center gap-3 group/btn uppercase tracking-widest italic mt-8`}
+            disabled={isSubmitting}
+            className={`w-full ${isSubmitting ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500 text-white'} font-black py-4 rounded-lg transition-all flex items-center justify-center gap-3 group/btn uppercase tracking-widest italic mt-8`}
           >
-            {isSubmitting ? 'Processing_Record...' : (formData.profilePhoto ? 'Execute_Registration' : 'Visual_ID_Required')}
+            {isSubmitting ? 'Processing_Record...' : 'Execute_Registration'}
             {!isSubmitting && <ChevronRight className="group-hover/btn:translate-x-1 transition-transform" />}
           </button>
         </form>
