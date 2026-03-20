@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Code, ExternalLink, Calendar, Plus, X, Upload, CheckCircle2, Clock } from 'lucide-react';
+import { Code, ExternalLink, Calendar, Plus, X, Upload, CheckCircle2, Clock, Trash2 } from 'lucide-react';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../context/NotificationContext';
@@ -63,6 +63,17 @@ const ContestsPage = () => {
       showNotification(err.response?.data?.message || 'Failed to create contest', 'error');
     } finally {
       setProcessing(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this challenge?")) return;
+    try {
+      await api.delete(`/contests/${id}`);
+      showNotification('Challenge deleted successfully', 'success');
+      fetchContests();
+    } catch (err) {
+      showNotification(err.response?.data?.message || 'Failed to delete challenge', 'error');
     }
   };
 
@@ -138,11 +149,23 @@ const ContestsPage = () => {
                   <div className="px-3 py-1 bg-blue-500/10 border border-blue-500/20 rounded-full text-blue-400 text-[10px] font-black uppercase tracking-widest">
                     {contest.pointsReward} PTS
                   </div>
-                  {isFinished && (
-                    <div className="px-3 py-1 bg-red-500/10 border border-red-500/20 rounded-full text-red-400 text-[10px] font-black uppercase tracking-widest">
-                      Ended
-                    </div>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {isFinished && (
+                      <div className="px-3 py-1 bg-red-500/10 border border-red-500/20 rounded-full text-red-400 text-[10px] font-black uppercase tracking-widest">
+                        Ended
+                      </div>
+                    )}
+                    {isAdmin && (
+                      <button
+                        onClick={() => handleDelete(contest._id)}
+                        className="p-1 px-2 flex items-center gap-1 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded border border-red-500/20 transition-all text-[10px] font-black uppercase tracking-widest"
+                        title="Delete Contest"
+                      >
+                        <Trash2 size={12} />
+                        Delete
+                      </button>
+                    )}
+                  </div>
                 </div>
                 
                 <h3 className="text-xl font-bold text-white mb-2">{contest.title}</h3>

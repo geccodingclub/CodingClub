@@ -27,6 +27,7 @@ const Dashboard = () => {
   const [newNotice, setNewNotice] = useState({ title: '', content: '', isImportant: false });
   const [progress, setProgress] = useState({ points: 0, rank: 'Unranked' });
   const [submissions, setSubmissions] = useState([]);
+  const [studentSearch, setStudentSearch] = useState('');
 
   useEffect(() => {
     if (user && (user.role === 'VOLUNTEER' || user.role === 'PRESIDENT')) {
@@ -249,13 +250,23 @@ const Dashboard = () => {
 
           {/* Table */}
           <div className="bg-slate-900/60 backdrop-blur-xl rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
-            <div className="p-6 border-b border-white/5 flex justify-between items-center bg-white/5">
+            <div className="p-6 border-b border-white/5 flex justify-between items-center bg-white/5 flex-wrap gap-4">
               <h2 className="text-sm font-black uppercase tracking-widest italic flex items-center gap-2">
                 <Code size={16} className="text-blue-500" />
                 Root_Registry
               </h2>
+              <div className="relative w-full sm:w-auto">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                <input 
+                  type="text" 
+                  placeholder="Search name or ID..." 
+                  value={studentSearch}
+                  onChange={(e) => setStudentSearch(e.target.value)}
+                  className="pl-9 pr-4 py-2 bg-slate-800/50 border border-white/10 rounded-lg text-xs font-mono text-slate-200 focus:outline-none focus:border-blue-500/50 w-full sm:w-64 transition-all"
+                />
+              </div>
             </div>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto max-h-[500px] overflow-y-auto">
               <table className="w-full text-left font-mono text-xs">
                 <thead>
                   <tr className="bg-white/5 text-slate-500">
@@ -269,7 +280,7 @@ const Dashboard = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
-                  {students.map((student) => (
+                  {students.filter(s => s.name?.toLowerCase().includes(studentSearch.toLowerCase()) || s.rollNo?.toString().toLowerCase().includes(studentSearch.toLowerCase())).map((student) => (
                     <tr key={student._id} className="hover:bg-blue-500/5 transition-colors">
                       <td className="px-6 py-4">
                         <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-800 border border-white/5">
@@ -317,7 +328,7 @@ const Dashboard = () => {
                 Proof_Validation_Queue
               </h2>
             </div>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto max-h-[500px] overflow-y-auto">
               <table className="w-full text-left font-mono text-xs">
                 <thead>
                   <tr className="bg-white/5 text-slate-500">
@@ -374,7 +385,7 @@ const Dashboard = () => {
                     Member_Management_Lvl_99
                   </h2>
                 </div>
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto max-h-[500px] overflow-y-auto">
                   <table className="w-full text-left font-mono text-xs">
                     <thead>
                       <tr className="bg-white/5 text-slate-500">
@@ -426,7 +437,7 @@ const Dashboard = () => {
                     Deploy_New_Event
                   </button>
                 </div>
-                <div className="p-6 grid md:grid-cols-2 gap-4">
+                <div className="p-6 grid md:grid-cols-2 gap-4 max-h-[500px] overflow-y-auto">
                   {events.length > 0 ? events.map((event) => (
                     <div key={event._id} className="p-4 rounded-xl bg-white/5 border border-white/5 hover:border-purple-500/30 transition-all flex justify-between items-center">
                       <div className="flex items-center gap-4">
@@ -478,7 +489,7 @@ const Dashboard = () => {
                     Fire_Up_Notice
                   </button>
                 </div>
-                <div className="p-6 space-y-4">
+                <div className="p-6 space-y-4 max-h-[500px] overflow-y-auto">
                   {notices.length > 0 ? notices.map((notice) => (
                     <div key={notice._id} className={`p-4 rounded-xl border transition-all flex justify-between items-center ${notice.isImportant ? 'bg-red-500/5 border-red-500/20' : 'bg-white/5 border-white/5'}`}>
                       <div className="flex items-center gap-4">
