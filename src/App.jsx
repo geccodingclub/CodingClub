@@ -18,6 +18,8 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import NoticePage from './pages/NoticePage';
 import Resources from './pages/Resources';
+import ContestsPage from './pages/ContestsPage';
+import LeaderboardPage from './pages/LeaderboardPage';
 import './index.css';
 
 const ProtectedRoute = ({ children, roles }) => {
@@ -58,6 +60,16 @@ const AnimatedRoutes = () => {
         <Route path="/members" element={
           <ProtectedRoute>
             <PageWrapper><VerifiedID /></PageWrapper>
+          </ProtectedRoute>
+        } />
+        <Route path="/contests" element={
+          <ProtectedRoute>
+            <PageWrapper><ContestsPage /></PageWrapper>
+          </ProtectedRoute>
+        } />
+        <Route path="/leaderboard" element={
+          <ProtectedRoute>
+            <PageWrapper><LeaderboardPage /></PageWrapper>
           </ProtectedRoute>
         } />
         <Route path="/resources" element={<PageWrapper><Resources /></PageWrapper>} />

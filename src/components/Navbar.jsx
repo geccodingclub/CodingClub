@@ -45,6 +45,13 @@ const Navbar = () => {
             <Link to="/notices" className="hover:text-blue-400 transition-colors py-2 underline-offset-8 hover:underline">
               Notices
             </Link>
+            <Link to="/contests" className="hover:text-blue-400 transition-colors py-2 underline-offset-8 hover:underline text-blue-400 relative">
+              Contests
+              <span className="absolute top-1 -right-4 w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+            </Link>
+            <Link to="/leaderboard" className="hover:text-yellow-400 transition-colors py-2 underline-offset-8 hover:underline text-yellow-500">
+              Rankings
+            </Link>
             <Link to="/members" className="hover:text-blue-400 transition-colors py-2 underline-offset-8 hover:underline">
               Members
             </Link>
@@ -104,6 +111,12 @@ const Navbar = () => {
                   </Link>
                   <Link to="/notices" onClick={closeMenu} className="block p-4 rounded-xl bg-white/5 border border-white/5 text-slate-300">
                     Notices
+                  </Link>
+                  <Link to="/contests" onClick={closeMenu} className="block p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 font-bold">
+                    Contests [NEW]
+                  </Link>
+                  <Link to="/leaderboard" onClick={closeMenu} className="block p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 font-bold">
+                    Rankings
                   </Link>
                   <Link to="/members" onClick={closeMenu} className="block p-4 rounded-xl bg-white/5 border border-white/5 text-slate-300">
                     Members

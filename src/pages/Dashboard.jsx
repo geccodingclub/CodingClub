@@ -25,10 +25,15 @@ const Dashboard = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [notices, setNotices] = useState([]);
   const [newNotice, setNewNotice] = useState({ title: '', content: '', isImportant: false });
+  const [progress, setProgress] = useState({ points: 0, rank: 'Unranked' });
+  const [submissions, setSubmissions] = useState([]);
 
   useEffect(() => {
     if (user && (user.role === 'VOLUNTEER' || user.role === 'PRESIDENT')) {
       fetchStudents();
+      fetchPendingSubmissions();
+    } else if (user && user.role === 'STUDENT') {
+      fetchProgress();
     }
     if (user && user.role === 'PRESIDENT') {
       fetchMembers();
@@ -58,6 +63,34 @@ const Dashboard = () => {
       const res = await API.get('/notices');
       setNotices(res.data);
     } catch (err) { console.error(err); }
+  };
+
+  const fetchProgress = async () => {
+    try {
+      const res = await API.get('/users/progress');
+      setProgress(res.data);
+    } catch (err) { console.error(err); }
+  };
+
+  const fetchPendingSubmissions = async () => {
+    try {
+      const res = await API.get('/submissions?status=PENDING');
+      setSubmissions(res.data);
+    } catch (err) { console.error(err); }
+  };
+
+  const handleUpdateSubmissionStatus = async (id, status) => {
+    if (!window.confirm(`Mark this submission as ${status}?`)) return;
+    setProcessing(true);
+    try {
+      await API.put(`/submissions/${id}/status`, { status });
+      fetchPendingSubmissions();
+      showNotification(`Submission marked as ${status}`);
+    } catch (err) {
+      showNotification('Update failed', 'error');
+    } finally {
+      setProcessing(false);
+    }
   };
 
   const fetchStudents = async () => {
@@ -271,6 +304,60 @@ const Dashboard = () => {
                       </td>
                     </tr>
                   ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Admins: Submission Review Console */}
+          <div className="bg-slate-900/60 backdrop-blur-xl rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
+            <div className="p-6 border-b border-white/5 flex justify-between items-center bg-white/5">
+              <h2 className="text-sm font-black uppercase tracking-widest italic flex items-center gap-2">
+                <Code size={16} className="text-blue-500" />
+                Proof_Validation_Queue
+              </h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left font-mono text-xs">
+                <thead>
+                  <tr className="bg-white/5 text-slate-500">
+                    <th className="px-6 py-4 uppercase tracking-widest">Student</th>
+                    <th className="px-6 py-4 uppercase tracking-widest">Contest</th>
+                    <th className="px-6 py-4 uppercase tracking-widest">Proof_URL</th>
+                    <th className="px-6 py-4 uppercase tracking-widest text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {submissions.map((sub) => (
+                    <tr key={sub._id} className="hover:bg-blue-500/5 transition-colors">
+                      <td className="px-6 py-4 font-bold text-slate-200">{sub.user?.name} <span className="text-slate-500 italic">({sub.user?.rollNo})</span></td>
+                      <td className="px-6 py-4 text-slate-400 font-mono italic">{sub.contest?.title}</td>
+                      <td className="px-6 py-4">
+                        <a href={sub.proofUrl} target="_blank" rel="noreferrer" className="text-blue-400 hover:underline">View_Proof</a>
+                      </td>
+                      <td className="px-6 py-4 text-right space-x-2">
+                        <button 
+                          disabled={processing}
+                          onClick={() => handleUpdateSubmissionStatus(sub._id, 'APPROVED')}
+                          className={`${processing ? 'bg-slate-700 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-500'} text-white font-black px-3 py-1.5 rounded text-[10px] uppercase transition-all tracking-widest`}
+                        >
+                          Approve
+                        </button>
+                        <button 
+                          disabled={processing}
+                          onClick={() => handleUpdateSubmissionStatus(sub._id, 'REJECTED')}
+                          className={`${processing ? 'bg-slate-700 cursor-not-allowed' : 'bg-red-600 hover:bg-red-500'} text-white font-black px-3 py-1.5 rounded text-[10px] uppercase transition-all tracking-widest`}
+                        >
+                          Reject
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {submissions.length === 0 && (
+                    <tr>
+                      <td colSpan="4" className="px-6 py-8 text-center text-slate-500 font-mono italic uppercase">Queue is empty</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -571,6 +658,34 @@ const Dashboard = () => {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Status Card */}
           <div className="lg:col-span-2 space-y-8">
+            {/* Progress Report */}
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="p-10 rounded-2xl bg-slate-900/60 backdrop-blur-xl border border-white/5 relative overflow-hidden"
+            >
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div>
+                  <h3 className="text-xl font-black uppercase tracking-widest italic mb-2 flex items-center gap-3">
+                    <div className="w-2 h-6 bg-yellow-500" />
+                    Combat_Record
+                  </h3>
+                  <p className="text-xs font-mono text-slate-400">Total accumulated points and club ranking</p>
+                </div>
+                <div className="flex items-center gap-6">
+                  <div className="text-center">
+                    <p className="text-3xl font-black text-yellow-500">{progress.points}</p>
+                    <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Points</p>
+                  </div>
+                  <div className="w-px h-10 bg-white/10"></div>
+                  <div className="text-center">
+                    <p className="text-3xl font-black text-blue-500">#{progress.rank}</p>
+                    <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Rank</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
