@@ -25,7 +25,7 @@ const ContestsPage = () => {
 
   useEffect(() => {
     fetchContests();
-    if (user?.role === 'STUDENT') {
+    if (user) {
       fetchMySubmissions();
     }
   }, [user]);
@@ -187,7 +187,7 @@ const ContestsPage = () => {
                   </a>
                 </div>
 
-                {!isAdmin && !isFinished && status !== 'APPROVED' && (
+                {!isFinished && status !== 'APPROVED' && (
                   <button
                     onClick={() => { setSubmissionData({ contestId: contest._id, proofUrl: '' }); setShowSubmitModal(true); }}
                     className="w-full py-3 bg-white/5 hover:bg-blue-600 text-white rounded-lg font-black uppercase text-xs tracking-widest transition-all group-hover:bg-blue-600"
@@ -196,12 +196,12 @@ const ContestsPage = () => {
                   </button>
                 )}
 
-                {!isAdmin && status === 'APPROVED' && (
+                {status === 'APPROVED' && (
                   <div className="w-full py-3 bg-emerald-500/20 text-emerald-400 rounded-lg font-black uppercase text-xs tracking-widest flex items-center justify-center gap-2 border border-emerald-500/20">
                     <CheckCircle2 size={16} /> Completed
                   </div>
                 )}
-                {!isAdmin && status === 'PENDING' && (
+                {status === 'PENDING' && (
                   <div className="w-full py-2 text-yellow-400 font-black uppercase text-xs tracking-widest flex items-center justify-center gap-2 mt-2">
                     <Clock size={16} /> Under Review
                   </div>

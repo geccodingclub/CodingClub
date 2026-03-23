@@ -24,11 +24,21 @@ const VerifiedID = () => {
     }, []);
 
     const filteredMembers = members.filter(member => {
-        const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                             member.rollNo.toLowerCase().includes(searchTerm.toLowerCase());
+        const safeName = member.name || '';
+        const safeRollNo = member.rollNo || '';
+        const matchesSearch = safeName.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                             safeRollNo.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesYear = filterYear === 'ALL' || member.year === filterYear;
         return matchesSearch && matchesYear;
     });
+
+    const yearOptions = [
+        { label: 'ALL', value: 'ALL' },
+        { label: '1st Year', value: 1 },
+        { label: '2nd Year', value: 2 },
+        { label: '3rd Year', value: 3 },
+        { label: '4th Year', value: 4 }
+    ];
 
     const getRoleColor = (role) => {
         switch (role) {
@@ -79,17 +89,17 @@ const VerifiedID = () => {
                             />
                         </div>
                         <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
-                            {['ALL', '1st', '2nd', '3rd', '4th'].map(year => (
+                            {yearOptions.map(option => (
                                 <button
-                                    key={year}
-                                    onClick={() => setFilterYear(year)}
-                                    className={`px-4 py-2 rounded-lg font-black text-[10px] uppercase tracking-widest transition-all border ${
-                                        filterYear === year 
+                                    key={option.label}
+                                    onClick={() => setFilterYear(option.value)}
+                                    className={`px-4 py-2 rounded-lg font-black text-[10px] uppercase tracking-widest transition-all border whitespace-nowrap ${
+                                        filterYear === option.value 
                                         ? 'bg-blue-600 border-blue-500 text-white' 
                                         : 'bg-white/5 border-white/10 text-slate-500 hover:border-white/20'
                                     }`}
                                 >
-                                    {year} Year
+                                    {option.label}
                                 </button>
                             ))}
                         </div>
