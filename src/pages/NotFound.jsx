@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Terminal, Home, ChevronRight } from 'lucide-react';
+import { AlertTriangle, Home, ChevronRight } from 'lucide-react';
 import Background from '../components/Background';
 
 const NotFound = () => {
@@ -8,54 +8,52 @@ const NotFound = () => {
     <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
       <Background />
       
-      <div className="relative z-10 max-w-2xl w-full text-center">
+      <div className="relative z-10 max-w-lg w-full text-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="mb-8"
         >
-          <div className="inline-flex items-center justify-center w-24 h-24 rounded-3xl bg-blue-600/10 border border-blue-500/20 text-blue-500 mb-6 mx-auto">
-            <Terminal size={48} />
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-primary/10 border border-primary/20 text-primary mb-8 mx-auto">
+            <AlertTriangle size={40} />
           </div>
           
-          <h1 className="text-8xl font-black italic tracking-tighter text-white mb-2 leading-none">
-            404<span className="text-blue-500">_</span>
+          <h1 className="font-heading text-8xl md:text-9xl font-extrabold text-white mb-2 leading-none tracking-tight">
+            404
           </h1>
-          <p className="text-slate-500 font-mono text-sm uppercase tracking-[0.2em] mb-8">
-            // Error: Request_Target_Not_Found
+          <p className="text-white/25 font-mono text-xs uppercase tracking-[0.2em] mb-8">
+            Page Not Found
           </p>
           
-          <div className="bg-slate-900/40 border border-white/5 p-8 rounded-3xl backdrop-blur-xl mb-12">
-            <p className="text-slate-300 text-lg leading-relaxed">
-              The sector you are trying to access is either restricted or does not exist in our current database index.
+          <div className="p-6 rounded-2xl surface-card mb-10">
+            <p className="text-white/40 text-sm leading-relaxed">
+              The page you're looking for doesn't exist or has been moved to a different URL.
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link 
               to="/" 
-              className="flex items-center justify-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black uppercase tracking-widest text-sm transition-all shadow-lg shadow-blue-600/20 group"
+              className="btn-primary px-8 py-3.5 text-sm justify-center"
             >
-              <Home size={18} />
-              Return_Home
-              <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              <Home size={16} />
+              Go Home
+              <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </Link>
             
             <Link 
               to="/dashboard" 
-              className="flex items-center justify-center gap-2 px-8 py-4 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-2xl font-black uppercase tracking-widest text-sm transition-all"
+              className="btn-secondary px-8 py-3.5 text-sm justify-center"
             >
-              Access_Dashboard
+              Dashboard
             </Link>
           </div>
         </motion.div>
 
-        {/* Decorative elements */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 w-[500px] h-[500px] bg-blue-600/10 blur-[120px] rounded-full" />
+        {/* Decorative glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 w-[400px] h-[400px] rounded-full opacity-20"
+          style={{ background: 'radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, transparent 70%)' }}
+        />
       </div>
-
-      {/* Grid Overlay */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px]" />
     </div>
   );
 };

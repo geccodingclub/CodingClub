@@ -1,62 +1,74 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Rocket, Github, Twitter, Linkedin, Mail, Heart, ArrowUpRight } from 'lucide-react';
+import { Github, Linkedin, Mail, Heart, ArrowUpRight, Instagram, MessageCircle } from 'lucide-react';
 
 const Footer = () => {
     const currentYear = new Date().getFullYear();
 
     const footerLinks = [
         {
-            title: 'Ecosystem',
+            title: 'Navigation',
             links: [
-                { name: 'About Club', path: '/about' },
+                { name: 'About', path: '/about' },
                 { name: 'Events', path: '/events' },
                 { name: 'Notices', path: '/notices' },
                 { name: 'Members', path: '/members' },
-                { name: 'Leaderboard', path: '/dashboard' },
+                { name: 'Leaderboard', path: '/leaderboard' },
             ]
         },
         {
             title: 'Resources',
             links: [
-                { name: 'Resources', path: '/resources' },
+                { name: 'Resources Hub', path: '/resources' },
                 { name: 'Open Source', path: 'https://github.com/geccodingclub' },
-                { name: 'Community', path: '#' },
+                { name: 'Contests', path: '/contests' },
                 { name: 'Contact Us', path: '/contact' }
             ]
         }
     ];
 
     const socialLinks = [
-        { icon: <Github size={18} />, url: 'https://github.com/geccodingclub' },
-        { icon: <Twitter size={18} />, url: '#' },
-        { icon: <Linkedin size={18} />, url: '#' },
-        { icon: <Mail size={18} />, url: 'mailto:geccodingclub@gmail.com' }
+        { icon: <Instagram size={18} />, url: 'https://instagram.com/geccodingclub', label: 'Instagram' },
+        { icon: <Linkedin size={18} />, url: 'https://linkedin.com/company/geccodingclub', label: 'LinkedIn' },
+        { icon: <MessageCircle size={18} />, url: 'https://chat.whatsapp.com/geccodingclub', label: 'WhatsApp' },
+        { icon: <Github size={18} />, url: 'https://github.com/geccodingclub', label: 'GitHub' },
+        { icon: <Mail size={18} />, url: 'mailto:geccodingclub@gmail.com', label: 'Email' },
     ];
 
     return (
-        <footer className="relative mt-20 border-t border-white/5 bg-slate-950/20 backdrop-blur-xl pt-20 pb-10 overflow-hidden">
-            {/* Background Glow */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent" />
+        <footer 
+            className="relative mt-20 border-t border-white/[0.06] pt-16 pb-8 overflow-hidden"
+            style={{ background: '#050505' }}
+        >
+            {/* Top Glow Line */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
             
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-14">
                     {/* Brand Section */}
                     <div className="lg:col-span-2">
-                        <Link to="/" className="flex items-center gap-3 group mb-6">
-                            <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center text-white transform group-hover:rotate-12 transition-transform shadow-[0_0_20px_rgba(37,99,235,0.4)]">
-                                <Rocket size={24} />
+                        <Link to="/" className="flex items-center gap-2.5 group mb-5">
+                            <img 
+                                src="/logo.png" 
+                                alt="CORTEX Logo" 
+                                className="w-9 h-9 rounded-lg object-contain group-hover:scale-110 transition-transform duration-300" 
+                            />
+                            <div className="flex flex-col leading-none">
+                                <span className="text-[15px] font-heading font-extrabold tracking-wide uppercase text-white">
+                                    CORTEX
+                                </span>
+                               
                             </div>
-                            <span className="text-2xl font-black tracking-tighter uppercase italic">
-                                Coding<span className="text-blue-500">Club</span>
-                            </span>
                         </Link>
-                        <p className="text-slate-400 font-mono text-sm max-w-sm mb-8 leading-relaxed">
-                            // The premier student developer community. <br />
-                            // Building the innovators of tomorrow, <br />
-                            // one line of code at a time.
+                        <p className="text-white/30 font-mono text-xs max-w-xs mb-2 leading-relaxed">
+                            think. code. evolve.
                         </p>
-                        <div className="flex gap-4">
+                        <p className="text-white/20 font-mono text-[10px] max-w-xs mb-8 leading-relaxed">
+                            The premier student developer community at GEC Bhojpur.
+                        </p>
+
+                        {/* Social Links */}
+                        <div className="flex gap-3">
                             {socialLinks.map((social, i) => (
                                 <motion.a
                                     key={i}
@@ -64,7 +76,8 @@ const Footer = () => {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     whileHover={{ y: -3, scale: 1.1 }}
-                                    className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:border-blue-500/50 transition-all"
+                                    className="w-9 h-9 rounded-lg bg-white/[0.03] border border-white/[0.06] flex items-center justify-center text-white/30 hover:text-white hover:border-primary/30 hover:bg-primary/10 transition-all duration-300"
+                                    aria-label={social.label}
                                 >
                                     {social.icon}
                                 </motion.a>
@@ -75,10 +88,10 @@ const Footer = () => {
                     {/* Links Sections */}
                     {footerLinks.map((section, i) => (
                         <div key={i}>
-                            <h4 className="text-sm font-black uppercase tracking-[0.2em] text-white mb-6 italic">
+                            <h4 className="text-[11px] font-heading font-bold uppercase tracking-[0.15em] text-white/50 mb-5">
                                 {section.title}
                             </h4>
-                            <ul className="space-y-4">
+                            <ul className="space-y-3">
                                 {section.links.map((link, j) => (
                                     <li key={j}>
                                         {link.path.startsWith('http') ? (
@@ -86,18 +99,18 @@ const Footer = () => {
                                                 href={link.path}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="text-slate-400 hover:text-blue-400 transition-colors font-mono text-xs flex items-center gap-2 group"
+                                                className="text-white/25 hover:text-primary transition-colors duration-300 font-mono text-xs flex items-center gap-2 group"
                                             >
                                                 {link.name}
-                                                <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                <ArrowUpRight size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                                             </a>
                                         ) : (
                                             <Link 
                                                 to={link.path}
-                                                className="text-slate-400 hover:text-blue-400 transition-colors font-mono text-xs flex items-center gap-2 group"
+                                                className="text-white/25 hover:text-primary transition-colors duration-300 font-mono text-xs flex items-center gap-2 group"
                                             >
                                                 {link.name}
-                                                <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                <ArrowUpRight size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                                             </Link>
                                         )}
                                     </li>
@@ -108,21 +121,26 @@ const Footer = () => {
                 </div>
 
                 {/* Bottom Bar */}
-                <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
-                    <p className="text-slate-500 font-mono text-[10px] uppercase tracking-widest">
-                        © {currentYear} CODING_CLUB_GEC. SYSTEM_VERSION: 2.0.0
+                <div className="pt-6 border-t border-white/[0.04] flex flex-col md:flex-row justify-between items-center gap-4">
+                    <p className="text-white/20 font-mono text-[10px] uppercase tracking-[0.15em]">
+                        © {currentYear} CORTEX — GEC Bhojpur. All rights reserved.
                     </p>
-                    <a 
-                        href="https://github.com/Abudarda12" 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className="flex items-center gap-2 text-slate-500 hover:text-blue-400 transition-colors font-mono text-[10px] uppercase tracking-widest group"
-                    >
-                        <span>made with</span>
-                        <Heart size={10} className="text-red-500 animate-pulse group-hover:scale-125 transition-transform" fill="currentColor" />
-                        <span>love by Abudarda</span>
-                        <ArrowUpRight size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </a>
+                    <div className="flex items-center gap-4">
+                        <p className="text-white/15 font-mono text-[10px] uppercase tracking-[0.1em] flex items-center gap-1.5">
+                            Built with
+                            <Heart size={10} className="text-red-500 animate-pulse" fill="currentColor" />
+                            by CORTEX
+                        </p>
+                        <a 
+                            href="https://github.com/Abudarda12" 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="flex items-center gap-1.5 text-white/15 hover:text-primary transition-colors duration-300 font-mono text-[10px] uppercase tracking-[0.1em] group"
+                        >
+                            <span>@Abudarda</span>
+                            <ArrowUpRight size={8} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </a>
+                    </div>
                 </div>
             </div>
         </footer>

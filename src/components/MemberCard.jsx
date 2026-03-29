@@ -48,7 +48,7 @@ const MemberCard = ({ user }) => {
     if (cardRef.current === null) return;
     try {
       const dataUrl = await toPng(cardRef.current, { cacheBust: true });
-      download(dataUrl, `coding_club_card_${user.rollNo}.png`);
+      download(dataUrl, `cortex_card_${user.rollNo}.png`);
     } catch (err) {
       console.error('Download failed', err);
     }
@@ -87,7 +87,7 @@ const MemberCard = ({ user }) => {
           <div className="flex justify-between items-start mb-6 sm:mb-10">
             <div>
               <h2 className="text-xl sm:text-2xl font-black italic tracking-tighter uppercase leading-none">
-                Coding<span className={`bg-gradient-to-r ${theme.primary} bg-clip-text text-transparent`}>_Club</span>
+                CORTEX<span className={`bg-gradient-to-r ${theme.primary} bg-clip-text text-transparent`}>_ID</span>
               </h2>
               <p className={`text-[8px] sm:text-[9px] font-mono ${theme.accent} uppercase tracking-[0.3em] font-bold mt-2`}>GEC BHOJPUR // {theme.label}</p>
             </div>
@@ -158,7 +158,7 @@ const MemberCard = ({ user }) => {
                 <p className="text-[8px] font-mono text-emerald-500 uppercase tracking-widest">Online</p>
               </div>
             </div>
-            <p className="text-[8px] sm:text-[10px] font-mono text-slate-700 uppercase tracking-[0.4em] font-black italic">ROOT_GEC_BHP</p>
+            <p className="text-[8px] sm:text-[10px] font-mono text-slate-700 uppercase tracking-[0.4em] font-black italic">CORTEX_GEC</p>
           </div>
         </div>
       </div>

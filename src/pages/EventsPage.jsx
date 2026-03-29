@@ -3,6 +3,7 @@ import { Calendar, MapPin, Clock, Users, ExternalLink, Sparkles, Binary, Loader2
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import FeaturedEvent from '../components/FeaturedEvent';
 
 const EventsPage = () => {
     const [events, setEvents] = useState([]);
@@ -24,127 +25,135 @@ const EventsPage = () => {
 
     const getIcon = (category) => {
         switch (category) {
-            case 'HACKATHON': return <Binary className="text-blue-400" />;
+            case 'HACKATHON': return <Binary className="text-primary" />;
             case 'WORKSHOP': return <Sparkles className="text-purple-400" />;
             default: return <Users className="text-pink-400" />;
         }
     };
 
     return (
-        <div className="pt-32 pb-20 px-4">
+        <div className="pt-28 md:pt-32 pb-20 px-4">
             <div className="max-w-7xl mx-auto">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20">
+                {/* Header */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
                     <div className="max-w-2xl">
                         <motion.div
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black tracking-[0.3em] uppercase mb-6"
+                            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary font-mono text-[10px] font-bold tracking-[0.2em] uppercase mb-6"
                         >
                             <Calendar size={14} />
-                            <span>Live_Calendar</span>
+                            <span>Live Calendar</span>
                         </motion.div>
                         <motion.h1 
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="text-5xl md:text-7xl font-black italic tracking-tighter mb-6"
+                            className="font-heading text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-5"
                         >
                             Upcoming <br />
-                            <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">Expeditions_</span>
+                            <span className="bg-gradient-to-r from-primary to-cyan-400 bg-clip-text text-transparent">Events</span>
                         </motion.h1>
-                        <p className="text-slate-400 font-mono leading-relaxed">
-                            // Join us for our next wave of technical deep dives, hackathons, and innovative sessions. 
-                            // Open your mind, sharpen your tools.
+                        <p className="text-white/30 font-mono text-sm leading-relaxed max-w-lg">
+                            Join us for our next wave of technical deep dives, hackathons, and innovative sessions.
                         </p>
                     </div>
                     
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="p-6 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-xl hidden lg:block"
+                        className="p-5 rounded-2xl hidden lg:block surface-card"
                     >
-                        <p className="text-slate-500 text-[10px] uppercase font-black mb-4 tracking-widest">Active_Events</p>
-                        <div className="flex gap-4">
-                            <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-bold">
-                                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                                Registration_Open
+                        <p className="text-white/25 font-mono text-[10px] uppercase font-bold mb-3 tracking-[0.15em]">Status</p>
+                        <div className="flex gap-3">
+                            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-green-500/5 border border-green-500/15 text-green-400 font-mono text-[10px] font-bold">
+                                <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                                Registration Open
                             </div>
-                            <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold">
-                                <Clock size={14} />
+                            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/5 border border-primary/15 text-primary font-mono text-[10px] font-bold">
+                                <Clock size={12} />
                                 24/7 Support
                             </div>
                         </div>
                     </motion.div>
                 </div>
 
+                {/* Featured Event */}
+                <div className="mb-20">
+                    <FeaturedEvent />
+                </div>
+
                 {/* Events Grid */}
                 {loading ? (
-                    <div className="flex flex-col items-center justify-center py-40 gap-4">
-                        <Loader2 className="text-blue-500 animate-spin" size={40} />
-                        <p className="font-mono text-xs text-slate-500 animate-pulse tracking-widest uppercase font-black">Syncing_Nexus_Events...</p>
+                    <div className="flex flex-col items-center justify-center py-32 gap-4">
+                        <Loader2 className="text-primary animate-spin" size={36} />
+                        <p className="font-mono text-[10px] text-white/25 animate-pulse tracking-[0.2em] uppercase font-bold">Loading Events...</p>
                     </div>
                 ) : events.length > 0 ? (
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
                         {events.map((event, i) => (
                             <motion.div
                                 key={event._id}
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
-                                transition={{ delay: i * 0.1 }}
+                                transition={{ delay: i * 0.08 }}
+                                whileHover={{ y: -5 }}
                                 className="group relative"
                             >
-                                <div className="relative p-8 rounded-3xl bg-slate-900/40 border border-white/5 hover:border-blue-500/30 transition-all overflow-hidden h-full flex flex-col">
-                                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-opacity">
+                                <div 
+                                    className="relative p-7 rounded-2xl transition-all duration-300 overflow-hidden h-full flex flex-col surface-card-hover"
+                                >
+                                    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-15 transition-opacity duration-300">
                                         {getIcon(event.status)}
                                     </div>
                                     
-                                    <span className="inline-block px-3 py-1 rounded-md bg-white/5 text-[10px] font-black text-slate-400 mb-6 tracking-widest">
+                                    <span className="inline-block px-2.5 py-1 rounded-md bg-white/[0.03] text-[10px] font-mono font-bold text-white/30 mb-5 tracking-[0.15em] uppercase w-fit">
                                         {event.status}
                                     </span>
                                     
-                                    <h3 className="text-2xl font-black mb-4 tracking-tight group-hover:text-blue-400 transition-colors italic">
+                                    <h3 className="font-heading text-xl font-bold mb-3 tracking-tight group-hover:text-primary transition-colors duration-300">
                                         {event.title}
                                     </h3>
                                     
-                                    <p className="text-slate-400 font-mono text-sm leading-relaxed mb-8 flex-grow">
+                                    <p className="text-white/30 font-mono text-sm leading-relaxed mb-6 flex-grow">
                                         {event.description}
                                     </p>
                                     
-                                    <div className="space-y-3 pt-6 border-t border-white/5">
-                                        <div className="flex items-center gap-3 text-slate-500 font-mono text-xs">
-                                            <Calendar size={14} className="text-blue-400" />
+                                    <div className="space-y-2.5 pt-5 border-t border-white/[0.06]">
+                                        <div className="flex items-center gap-3 text-white/25 font-mono text-xs">
+                                            <Calendar size={13} className="text-primary" />
                                             <span>{new Date(event.date).toLocaleDateString()}</span>
                                         </div>
-                                        <div className="flex items-center gap-3 text-slate-500 font-mono text-xs">
-                                            <MapPin size={14} className="text-blue-400" />
+                                        <div className="flex items-center gap-3 text-white/25 font-mono text-xs">
+                                            <MapPin size={13} className="text-primary" />
                                             <span>{event.location}</span>
                                         </div>
                                     </div>
 
                                     <Link 
                                         to="/register"
-                                        className="mt-8 px-6 py-3 bg-white/5 border border-white/10 rounded-xl font-bold flex items-center justify-between group-hover:bg-white group-hover:text-black transition-all"
+                                        className="btn-primary mt-6 justify-center text-sm py-3"
                                     >
-                                        <span>Register_Now</span>
-                                        <ExternalLink size={16} />
+                                        <span>Register Now</span>
+                                        <ExternalLink size={14} />
                                     </Link>
                                 </div>
                             </motion.div>
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center py-40 px-8 rounded-3xl border border-dashed border-white/5 bg-slate-900/10 mb-20">
-                        <Calendar className="mx-auto text-slate-800 mb-6" size={48} />
-                        <h3 className="text-2xl font-black text-slate-600 mb-2 italic tracking-tight">No_Active_Expeditions</h3>
-                        <p className="text-slate-500 font-mono text-sm max-w-sm mx-auto uppercase">
-                            // The President has not launched any new events yet. Check back soon.
+                    <div className="text-center py-28 px-8 rounded-2xl border border-dashed border-white/[0.06] mb-16" style={{ background: 'rgba(10,10,10,0.3)' }}>
+                        <Calendar className="mx-auto text-white/10 mb-5" size={44} />
+                        <h3 className="font-heading text-xl font-bold text-white/30 mb-2">No Active Events</h3>
+                        <p className="text-white/20 font-mono text-xs max-w-sm mx-auto">
+                            The President has not launched any new events yet. Check back soon.
                         </p>
                     </div>
                 )}
 
-                <div className="text-center p-12 rounded-3xl border border-dashed border-white/10 bg-slate-900/10">
-                    <p className="text-slate-500 font-mono italic">
-                        // More events are currently under encryption. Stay tuned for further transmissions.
+                <div className="text-center p-10 rounded-2xl border border-dashed border-white/[0.06]" style={{ background: 'rgba(10,10,10,0.2)' }}>
+                    <p className="text-white/20 font-mono text-sm">
+                        More events coming soon. Stay tuned for further announcements.
                     </p>
                 </div>
             </div>

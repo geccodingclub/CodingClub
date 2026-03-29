@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
 import API from '../api/axios';
 import { motion } from 'framer-motion';
-import { CheckCircle, Clock, ShieldCheck, Users, Search, Code, Cpu, Terminal as TerminalIcon, Plus, X, Rocket, Power, Megaphone, Trash2, AlertTriangle } from 'lucide-react';
+import { CheckCircle, Clock, ShieldCheck, Users, Search, Code, Cpu, Terminal as TerminalIcon, Plus, X, Rocket, Power, Megaphone, Trash2, AlertTriangle, Trophy, BookOpen, ChevronRight } from 'lucide-react';
 import { useNotification } from '../context/NotificationContext';
 import MemberCard from '../components/MemberCard';
 import EditProfileModal from '../components/EditProfileModal';
@@ -28,11 +29,15 @@ const Dashboard = () => {
   const [progress, setProgress] = useState({ points: 0, rank: 'Unranked' });
   const [submissions, setSubmissions] = useState([]);
   const [studentSearch, setStudentSearch] = useState('');
+  const [codeItStatus, setCodeItStatus] = useState({ isRegistered: false, registration: null, loading: true });
+  const [codeItRegistrations, setCodeItRegistrations] = useState([]);
+  const [codeItSearch, setCodeItSearch] = useState('');
 
   useEffect(() => {
     if (user && (user.role === 'VOLUNTEER' || user.role === 'PRESIDENT')) {
       fetchStudents();
       fetchPendingSubmissions();
+      fetchCodeItRegistrations();
     } else if (user && user.role === 'STUDENT') {
       fetchProgress();
     }
@@ -42,6 +47,7 @@ const Dashboard = () => {
     if (user) {
       fetchEvents();
       fetchNotices();
+      fetchCodeItStatus();
     }
   }, [user]);
 
@@ -70,6 +76,22 @@ const Dashboard = () => {
     try {
       const res = await API.get('/users/progress');
       setProgress(res.data);
+    } catch (err) { console.error(err); }
+  };
+
+  const fetchCodeItStatus = async () => {
+    try {
+      const res = await API.get('/codeit/status');
+      setCodeItStatus({ isRegistered: res.data.isRegistered, registration: res.data.registration, loading: false });
+    } catch (err) {
+      setCodeItStatus(prev => ({ ...prev, loading: false }));
+    }
+  };
+
+  const fetchCodeItRegistrations = async () => {
+    try {
+      const res = await API.get('/codeit/registrations');
+      setCodeItRegistrations(res.data);
     } catch (err) { console.error(err); }
   };
 
@@ -238,7 +260,7 @@ const Dashboard = () => {
               { label: 'DB_TOTAL', value: students.length, icon: <Users size={16}/>, color: 'blue' },
               { label: 'QUEUE_PENDING', value: students.filter(s => !s.isVerified).length, icon: <Clock size={16}/>, color: 'amber' },
               { label: 'DB_VERIFIED', value: students.filter(s => s.isVerified).length, icon: <CheckCircle size={16}/>, color: 'emerald' },
-              { label: 'SYS_LOAD', value: '1.2ms', icon: <Cpu size={16}/>, color: 'purple' }
+              { label: 'CODEIT_REG', value: codeItRegistrations.length, icon: <Trophy size={16}/>, color: 'blue' }
             ].map((stat, i) => (
               <div key={i} className="bg-slate-900/40 border border-white/5 p-6 rounded-xl group hover:border-blue-500/20 transition-all">
                 <div className={`text-${stat.color}-500/50 mb-3`}>{stat.icon}</div>
@@ -367,6 +389,96 @@ const Dashboard = () => {
                   {submissions.length === 0 && (
                     <tr>
                       <td colSpan="4" className="px-6 py-8 text-center text-slate-500 font-mono italic uppercase">Queue is empty</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* CodeIt Registrations Table */}
+          <div className="bg-slate-900/60 backdrop-blur-xl rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
+            <div className="p-6 border-b border-white/5 flex justify-between items-center bg-white/5 flex-wrap gap-4">
+              <h2 className="text-sm font-black uppercase tracking-widest italic flex items-center gap-2">
+                <Trophy size={16} className="text-primary" />
+                CodeIt_Registrations
+                <span className="ml-2 px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold">
+                  {codeItRegistrations.length}
+                </span>
+              </h2>
+              <div className="relative w-full sm:w-auto">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                <input 
+                  type="text" 
+                  placeholder="Search participant..." 
+                  value={codeItSearch}
+                  onChange={(e) => setCodeItSearch(e.target.value)}
+                  className="pl-9 pr-4 py-2 bg-slate-800/50 border border-white/10 rounded-lg text-xs font-mono text-slate-200 focus:outline-none focus:border-blue-500/50 w-full sm:w-64 transition-all"
+                />
+              </div>
+            </div>
+            <div className="overflow-x-auto max-h-[500px] overflow-y-auto">
+              <table className="w-full text-left font-mono text-xs">
+                <thead>
+                  <tr className="bg-white/5 text-slate-500">
+                    <th className="px-6 py-4 uppercase tracking-widest">Name</th>
+                    <th className="px-6 py-4 uppercase tracking-widest">Roll_No</th>
+                    <th className="px-6 py-4 uppercase tracking-widest">Branch</th>
+                    <th className="px-6 py-4 uppercase tracking-widest">Reg_No</th>
+                    <th className="px-6 py-4 uppercase tracking-widest">Language</th>
+                    <th className="px-6 py-4 uppercase tracking-widest">HackerRank</th>
+                    <th className="px-6 py-4 uppercase tracking-widest">Date</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {codeItRegistrations
+                    .filter(r => 
+                      r.user?.name?.toLowerCase().includes(codeItSearch.toLowerCase()) || 
+                      r.user?.rollNo?.toString().toLowerCase().includes(codeItSearch.toLowerCase()) ||
+                      r.registrationNumber?.toLowerCase().includes(codeItSearch.toLowerCase())
+                    )
+                    .map((reg) => (
+                    <tr key={reg._id} className="hover:bg-blue-500/5 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg overflow-hidden bg-slate-800 border border-white/5 shrink-0">
+                            {reg.user?.profilePhoto ? (
+                              <img src={reg.user.profilePhoto} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-slate-600"><UserIcon size={14} /></div>
+                            )}
+                          </div>
+                          <div>
+                            <p className="font-bold text-slate-200">{reg.user?.name}</p>
+                            <p className="text-[10px] text-slate-500 mt-0.5">{reg.user?.email}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-slate-400 font-mono italic">{reg.user?.rollNo}</td>
+                      <td className="px-6 py-4 text-slate-400 text-[10px]">{reg.user?.department}</td>
+                      <td className="px-6 py-4 text-slate-300 font-bold">{reg.registrationNumber}</td>
+                      <td className="px-6 py-4">
+                        <span className="px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold">
+                          {reg.programmingLanguage}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${
+                          reg.usedHackerRank === 'Yes' 
+                            ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400' 
+                            : 'bg-amber-500/10 border border-amber-500/20 text-amber-400'
+                        }`}>
+                          {reg.usedHackerRank}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-slate-500 text-[10px]">
+                        {new Date(reg.createdAt).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))}
+                  {codeItRegistrations.length === 0 && (
+                    <tr>
+                      <td colSpan="7" className="px-6 py-8 text-center text-slate-500 font-mono italic uppercase">No registrations yet</td>
                     </tr>
                   )}
                 </tbody>
@@ -729,6 +841,81 @@ const Dashboard = () => {
                     <h4 className="text-2xl font-black text-amber-400 mb-2 uppercase tracking-tight italic">Pending_Review</h4>
                     <p className="text-slate-500 font-mono text-sm leading-relaxed">Your application is in the queue. Our volunteers are manually verifying college IDs for data integrity.</p>
                   </div>
+                </div>
+              )}
+            </motion.div>
+
+            {/* CodeIt Competition Status */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-8 md:p-10 rounded-2xl bg-slate-900/60 backdrop-blur-xl border border-white/5 relative overflow-hidden"
+            >
+              <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full opacity-20"
+                style={{ background: 'radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%)' }}
+              />
+              <h3 className="text-xl font-black uppercase tracking-widest italic mb-6 flex items-center gap-3 relative z-10">
+                <div className="w-2 h-6 bg-primary" />
+                CodeIt_Status
+              </h3>
+              
+              {codeItStatus.loading ? (
+                <div className="flex items-center gap-3 p-6 rounded-xl bg-white/5 border border-white/5">
+                  <Clock size={16} className="text-slate-500 animate-spin" />
+                  <p className="font-mono text-xs text-slate-500 uppercase">Loading...</p>
+                </div>
+              ) : codeItStatus.isRegistered ? (
+                <div className="relative z-10">
+                  <div className="flex items-center gap-4 p-6 rounded-xl bg-emerald-500/5 border border-emerald-500/20 mb-4">
+                    <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
+                      <CheckCircle size={24} className="text-emerald-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-black text-emerald-400 uppercase tracking-tight text-sm">Registered for CodeIt</h4>
+                      <p className="text-slate-500 font-mono text-[10px] mt-1">You're all set! Details will be shared via email.</p>
+                    </div>
+                  </div>
+                  {codeItStatus.registration && (
+                    <div className="grid grid-cols-3 gap-3 mb-4">
+                      <div className="p-3 rounded-lg bg-white/5 border border-white/5">
+                        <p className="font-mono text-[8px] text-slate-500 uppercase tracking-widest mb-1">Reg. No.</p>
+                        <p className="font-mono text-xs text-slate-200 font-bold">{codeItStatus.registration.registrationNumber}</p>
+                      </div>
+                      <div className="p-3 rounded-lg bg-white/5 border border-white/5">
+                        <p className="font-mono text-[8px] text-slate-500 uppercase tracking-widest mb-1">Language</p>
+                        <p className="font-mono text-xs text-slate-200 font-bold">{codeItStatus.registration.programmingLanguage}</p>
+                      </div>
+                      <div className="p-3 rounded-lg bg-white/5 border border-white/5">
+                        <p className="font-mono text-[8px] text-slate-500 uppercase tracking-widest mb-1">Registered</p>
+                        <p className="font-mono text-xs text-slate-200 font-bold">{new Date(codeItStatus.registration.createdAt).toLocaleDateString()}</p>
+                      </div>
+                    </div>
+                  )}
+                  <Link to="/codeit/rulebook" className="inline-flex items-center gap-2 text-primary font-mono text-[10px] uppercase tracking-[0.15em] hover:text-primary/80 transition-colors">
+                    <BookOpen size={12} />
+                    View Rulebook
+                    <ChevronRight size={10} />
+                  </Link>
+                </div>
+              ) : (
+                <div className="relative z-10">
+                  <div className="flex items-center gap-4 p-6 rounded-xl bg-primary/5 border border-primary/20 mb-4">
+                    <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                      <Trophy size={24} className="text-primary" />
+                    </div>
+                    <div>
+                      <h4 className="font-black text-primary uppercase tracking-tight text-sm">CodeIt — Coding Competition</h4>
+                      <p className="text-slate-500 font-mono text-[10px] mt-1">CORTEX presents the ultimate coding showdown. Register now!</p>
+                    </div>
+                  </div>
+                  <Link 
+                    to="/codeit" 
+                    className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-black px-6 py-3 rounded-lg text-[10px] uppercase tracking-widest transition-all shadow-[0_0_20px_rgba(59,130,246,0.2)]"
+                  >
+                    <Trophy size={14} />
+                    Register Now
+                    <ChevronRight size={12} />
+                  </Link>
                 </div>
               )}
             </motion.div>

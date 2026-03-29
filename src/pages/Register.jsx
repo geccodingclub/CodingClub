@@ -2,7 +2,7 @@ import { useState, useRef, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Mail, Lock, Fingerprint, BookOpen, Calendar, ChevronRight, Phone, Camera, RotateCcw, Upload, Image as ImageIcon } from 'lucide-react';
+import { User, Mail, Lock, Fingerprint, BookOpen, Calendar, ChevronRight, Phone, Camera, RotateCcw, Upload, Image as ImageIcon, UserPlus } from 'lucide-react';
 import { useNotification } from '../context/NotificationContext';
 import Webcam from 'react-webcam';
 import ImageCropper from '../components/ImageCropper';
@@ -26,14 +26,13 @@ const Register = () => {
   const [imgSrc, setImgSrc] = useState(null);
   const [tempImg, setTempImg] = useState(null);
   const [showCropper, setShowCropper] = useState(false);
-  const [uploadMode, setUploadMode] = useState('gallery'); // 'camera' or 'gallery'
+  const [uploadMode, setUploadMode] = useState('gallery');
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateForm = () => {
     const newErrors = {};
     
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.email) {
       newErrors.email = 'Email is required';
@@ -41,14 +40,12 @@ const Register = () => {
       newErrors.email = 'Please enter a valid college email';
     }
 
-    // Password validation
     if (!formData.password) {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 8) {
       newErrors.password = 'Password must be at least 8 characters';
     }
 
-    // Phone validation
     const phoneRegex = /^\d{10}$/;
     if (!formData.phoneNumber) {
       newErrors.phoneNumber = 'Phone number is required';
@@ -56,12 +53,10 @@ const Register = () => {
       newErrors.phoneNumber = 'Enter a valid 10-digit phone number';
     }
 
-    // Name validation
     if (!formData.name.trim()) {
       newErrors.name = 'Name is required';
     }
 
-    // Roll No validation
     if (!formData.rollNo.trim()) {
       newErrors.rollNo = 'Roll number is required';
     }
@@ -113,44 +108,60 @@ const Register = () => {
     setIsSubmitting(true);
     try {
       await register(formData);
-      showNotification('Identity record created. Welcome to the club.');
+      showNotification('Registration successful. Welcome to the club!');
       navigate('/dashboard');
     } catch (err) {
-      const msg = err.response?.data?.message || err.response?.data?.error || 'Registration sequence failure';
+      const msg = err.response?.data?.message || err.response?.data?.error || 'Registration failed. Please try again.';
       showNotification(msg, 'error');
       setIsSubmitting(false);
     }
   };
+
+  const inputWrapperBase = "flex items-center gap-3 px-4 py-3.5 rounded-xl focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/30 transition-all duration-300";
+  const inputStyle = { background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' };
+  const inputStyleError = { background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(244, 63, 94, 0.3)' };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 py-20 md:py-32">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-xl bg-slate-900/60 backdrop-blur-xl p-6 md:p-10 rounded-2xl border border-white/5 shadow-2xl relative overflow-hidden group"
+        className="w-full max-w-xl p-6 md:p-10 rounded-2xl shadow-2xl relative overflow-hidden surface-card"
       >
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500" />
+        {/* Top accent line */}
+        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent rounded-t-2xl" />
         
-        <div className="mb-12">
-          <h2 className="text-4xl font-black mb-2 tracking-tighter uppercase italic">Initialize<span className="text-blue-500">_User</span></h2>
-          <p className="text-slate-500 font-mono text-sm">// Create your permanent record in the club database</p>
+        <div className="mb-10">
+          <img 
+            src="/logo.png" 
+            alt="CORTEX Logo" 
+            className="w-14 h-14 rounded-2xl object-contain mb-5" 
+          />
+          <h2 className="font-heading text-3xl font-extrabold mb-2 tracking-tight">
+            Create <span className="text-primary">Account</span>
+          </h2>
+          <p className="text-white/25 font-mono text-xs">Join the CORTEX community at GEC Bhojpur</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="grid md:grid-cols-2 gap-5">
+            <div className="space-y-5">
               {[
-                { name: 'name', icon: <User size={18} />, placeholder: 'Full Name' },
-                { name: 'email', icon: <Mail size={18} />, placeholder: 'College Email', type: 'email' },
-                { name: 'password', icon: <Lock size={18} />, placeholder: 'Password', type: 'password' },
+                { name: 'name', icon: <User size={16} />, placeholder: 'Full Name', label: 'Name' },
+                { name: 'email', icon: <Mail size={16} />, placeholder: 'you@email.com', type: 'email', label: 'Email' },
+                { name: 'password', icon: <Lock size={16} />, placeholder: '••••••••', type: 'password', label: 'Password' },
               ].map((f) => (
-                <div key={f.name} className="group/input">
-                  <div className={`flex items-center gap-3 px-4 py-3 bg-slate-800/50 border ${errors[f.name] ? 'border-red-500/50' : 'border-white/5'} rounded-lg focus-within:border-blue-500/50 transition-all`}>
-                    <span className={`${errors[f.name] ? 'text-red-400' : 'text-slate-500'} group-focus-within/input:text-blue-400 transition-colors`}>{f.icon}</span>
+                <div key={f.name}>
+                  <label className="font-mono text-[10px] text-white/25 font-bold uppercase tracking-[0.15em] ml-1 mb-1.5 block">{f.label}</label>
+                  <div 
+                    className={inputWrapperBase}
+                    style={errors[f.name] ? inputStyleError : inputStyle}
+                  >
+                    <span className={`${errors[f.name] ? 'text-red-400' : 'text-white/20'} transition-colors`}>{f.icon}</span>
                     <input
                       type={f.type || 'text'}
                       placeholder={f.placeholder}
-                      className="bg-transparent border-none outline-none w-full font-mono text-sm placeholder:text-slate-600"
+                      className="bg-transparent border-none outline-none w-full font-mono text-sm text-white/80 placeholder:text-white/15"
                       value={formData[f.name]}
                       onChange={(e) => {
                         const { value } = e.target;
@@ -164,13 +175,18 @@ const Register = () => {
               ))}
             </div>
 
-            <div className="space-y-6">
-              <div className="group/input text-sm">
-                <div className={`flex items-center gap-3 px-4 py-3 bg-slate-800/50 border ${errors.rollNo ? 'border-red-500/50' : 'border-white/5'} rounded-lg focus-within:border-blue-500/50 transition-all`}>
-                  <span className={`${errors.rollNo ? 'text-red-400' : 'text-slate-500'} group-focus-within/input:text-blue-400 transition-colors`}><Fingerprint size={18} /></span>
+            <div className="space-y-5">
+              {/* Roll Number */}
+              <div>
+                <label className="font-mono text-[10px] text-white/25 font-bold uppercase tracking-[0.15em] ml-1 mb-1.5 block">Roll Number</label>
+                <div 
+                  className={inputWrapperBase}
+                  style={errors.rollNo ? inputStyleError : inputStyle}
+                >
+                  <span className={`${errors.rollNo ? 'text-red-400' : 'text-white/20'} transition-colors`}><Fingerprint size={16} /></span>
                   <input
-                    placeholder="College Roll No"
-                    className="bg-transparent border-none outline-none w-full font-mono placeholder:text-slate-600"
+                    placeholder="e.g. 2023XXXX"
+                    className="bg-transparent border-none outline-none w-full font-mono text-sm text-white/80 placeholder:text-white/15"
                     value={formData.rollNo}
                     onChange={(e) => {
                       const { value } = e.target;
@@ -182,41 +198,57 @@ const Register = () => {
                 {errors.rollNo && <p className="text-[10px] text-red-400 mt-1 ml-1 font-mono">{errors.rollNo}</p>}
               </div>
 
-              <div className="group/input text-sm">
-                <div className="flex items-center gap-3 px-4 py-3 bg-slate-800/50 border border-white/5 rounded-lg focus-within:border-blue-500/50 transition-all">
-                  <span className="text-slate-500 group-focus-within/input:text-blue-400 transition-colors"><BookOpen size={18} /></span>
+              {/* Department */}
+              <div>
+                <label className="font-mono text-[10px] text-white/25 font-bold uppercase tracking-[0.15em] ml-1 mb-1.5 block">Department</label>
+                <div 
+                  className={inputWrapperBase}
+                  style={inputStyle}
+                >
+                  <span className="text-white/20 transition-colors"><BookOpen size={16} /></span>
                   <select 
-                    className="bg-transparent border-none outline-none w-full font-mono appearance-none"
+                    className="bg-transparent border-none outline-none w-full font-mono text-sm appearance-none text-white/80"
                     value={formData.department}
                     onChange={(e) => setFormData(prev => ({ ...prev, department: e.target.value }))}
                   >
                     {DEPARTMENTS.map(dept => (
-                      <option key={dept} value={dept} disabled={dept === 'Select Department'} className="bg-slate-900">{dept}</option>
+                      <option key={dept} value={dept} disabled={dept === 'Select Department'} className="bg-[#0A0A0A] text-white">{dept}</option>
                     ))}
                   </select>
                 </div>
               </div>
-              <div className="group/input text-sm">
-                <div className="flex items-center gap-3 px-4 py-3 bg-slate-800/50 border border-white/5 rounded-lg focus-within:border-blue-500/50 transition-all">
-                  <span className="text-slate-500 group-focus-within/input:text-blue-400 transition-colors"><Calendar size={18} /></span>
+
+              {/* Year */}
+              <div>
+                <label className="font-mono text-[10px] text-white/25 font-bold uppercase tracking-[0.15em] ml-1 mb-1.5 block">Year</label>
+                <div 
+                  className={inputWrapperBase}
+                  style={inputStyle}
+                >
+                  <span className="text-white/20 transition-colors"><Calendar size={16} /></span>
                   <select 
-                    className="bg-transparent border-none outline-none w-full font-mono appearance-none"
+                    className="bg-transparent border-none outline-none w-full font-mono text-sm appearance-none text-white/80"
                     value={formData.year}
                     onChange={(e) => setFormData(prev => ({ ...prev, year: parseInt(e.target.value) }))}
                   >
-                    <option value="Select Year" disabled className="bg-slate-900">Select Year</option>
-                    {[1,2,3,4].map(y => <option key={y} value={y} className="bg-slate-900">{y} Year</option>)}  
+                    <option value="Select Year" disabled className="bg-[#0A0A0A] text-white">Select Year</option>
+                    {[1,2,3,4].map(y => <option key={y} value={y} className="bg-[#0A0A0A] text-white">{y} Year</option>)}  
                   </select>
                 </div>
               </div>
 
-              <div className="group/input text-sm">
-                <div className={`flex items-center gap-3 px-4 py-3 bg-slate-800/50 border ${errors.phoneNumber ? 'border-red-500/50' : 'border-white/5'} rounded-lg focus-within:border-blue-500/50 transition-all`}>
-                  <span className={`${errors.phoneNumber ? 'text-red-400' : 'text-slate-500'} group-focus-within/input:text-blue-400 transition-colors`}><Phone size={18} /></span>
+              {/* Phone */}
+              <div>
+                <label className="font-mono text-[10px] text-white/25 font-bold uppercase tracking-[0.15em] ml-1 mb-1.5 block">Phone</label>
+                <div 
+                  className={inputWrapperBase}
+                  style={errors.phoneNumber ? inputStyleError : inputStyle}
+                >
+                  <span className={`${errors.phoneNumber ? 'text-red-400' : 'text-white/20'} transition-colors`}><Phone size={16} /></span>
                   <input
                     type="tel"
-                    placeholder="Phone Number"
-                    className="bg-transparent border-none outline-none w-full font-mono placeholder:text-slate-600"
+                    placeholder="10-digit number"
+                    className="bg-transparent border-none outline-none w-full font-mono text-sm text-white/80 placeholder:text-white/15"
                     value={formData.phoneNumber}
                     onChange={(e) => {
                       const { value } = e.target;
@@ -230,30 +262,34 @@ const Register = () => {
             </div>
           </div>
 
-          <div className="space-y-4 pt-6 mt-6 border-t border-white/5">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 italic">Verify_Identity_Bio (Optional)</h3>
-              <div className="flex bg-slate-800/50 p-1 rounded-lg border border-white/5">
+          {/* Photo Upload Section */}
+          <div className="space-y-4 pt-5 mt-5 border-t border-white/[0.06]">
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="font-mono text-[10px] font-bold uppercase tracking-[0.15em] text-white/25">Profile Photo <span className="text-white/15">(Optional)</span></h3>
+              <div className="flex p-1 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
                 <button
                   type="button"
                   onClick={() => { setUploadMode('camera'); retake(); }}
-                  className={`px-3 py-1.5 rounded-md text-[10px] font-black uppercase transition-all flex items-center gap-2 ${uploadMode === 'camera' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                  className={`px-3 py-1.5 rounded-md text-[10px] font-bold uppercase transition-all duration-300 flex items-center gap-1.5 ${uploadMode === 'camera' ? 'bg-primary text-white shadow-glow-sm' : 'text-white/30 hover:text-white/60'}`}
                 >
-                  <Camera size={12} />
-                  Cam
+                  <Camera size={11} />
+                  Camera
                 </button>
                 <button
                   type="button"
                   onClick={() => { setUploadMode('gallery'); retake(); }}
-                  className={`px-3 py-1.5 rounded-md text-[10px] font-black uppercase transition-all flex items-center gap-2 ${uploadMode === 'gallery' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                  className={`px-3 py-1.5 rounded-md text-[10px] font-bold uppercase transition-all duration-300 flex items-center gap-1.5 ${uploadMode === 'gallery' ? 'bg-primary text-white shadow-glow-sm' : 'text-white/30 hover:text-white/60'}`}
                 >
-                  <Upload size={12} />
+                  <Upload size={11} />
                   Gallery
                 </button>
               </div>
             </div>
 
-            <div className="relative group/camera rounded-xl overflow-hidden bg-slate-800/50 border border-white/5 aspect-video flex items-center justify-center">
+            <div 
+              className="relative rounded-xl overflow-hidden aspect-video flex items-center justify-center"
+              style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}
+            >
               {!imgSrc ? (
                 <>
                   {uploadMode === 'camera' ? (
@@ -265,21 +301,21 @@ const Register = () => {
                         className="w-full h-full object-cover"
                         videoConstraints={{ facingMode: "user" }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent flex items-end justify-center pb-6">
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#050505]/80 to-transparent flex items-end justify-center pb-5">
                         <button
                           type="button"
                           onClick={capture}
-                          className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-black text-[10px] uppercase tracking-widest transition-all shadow-xl"
+                          className="btn-primary text-[10px] tracking-[0.1em] uppercase px-5 py-2.5 rounded-full"
                         >
-                          <Camera size={16} />
-                          Capture_Visual_ID
+                          <Camera size={14} />
+                          Capture Photo
                         </button>
                       </div>
                     </>
                   ) : (
-                    <div className="flex flex-col items-center gap-4">
-                      <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center text-blue-500 border border-blue-500/20">
-                        <ImageIcon size={32} />
+                    <div className="flex flex-col items-center gap-3 py-4">
+                      <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center text-primary border border-primary/20">
+                        <ImageIcon size={28} />
                       </div>
                       <input
                         type="file"
@@ -292,30 +328,30 @@ const Register = () => {
                       <button
                         type="button"
                         onClick={() => fileInputRef.current.click()}
-                        className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-black text-[10px] uppercase tracking-widest transition-all shadow-xl"
+                        className="btn-primary text-[10px] tracking-[0.1em] uppercase px-5 py-2.5 rounded-full"
                       >
-                        <Upload size={16} />
-                        Select_From_Gallery
+                        <Upload size={14} />
+                        Choose from Gallery
                       </button>
-                      <p className="text-[9px] font-mono text-slate-500 uppercase tracking-widest mt-2">Format: JPG/PNG/WEBP</p>
+                      <p className="font-mono text-[9px] text-white/15 uppercase tracking-[0.15em] mt-1">JPG / PNG / WEBP</p>
                     </div>
                   )}
                 </>
               ) : (
                 <>
                   <img src={imgSrc} alt="Capture" className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent flex items-end justify-center pb-6 gap-4">
-                    <div className="px-4 py-2 bg-emerald-500/20 border border-emerald-500/50 rounded-full text-emerald-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 backdrop-blur-sm">
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#050505]/80 to-transparent flex items-end justify-center pb-5 gap-3">
+                    <div className="px-3.5 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-[10px] font-bold uppercase tracking-[0.1em] flex items-center gap-2 backdrop-blur-sm">
                       <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      Visual_Fixed
+                      Photo Set
                     </div>
                     <button
                       type="button"
                       onClick={retake}
-                      className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border border-white/5 flex items-center gap-2 backdrop-blur-sm"
+                      className="btn-secondary text-[10px] tracking-[0.1em] uppercase px-4 py-2 rounded-full"
                     >
-                      <RotateCcw size={14} />
-                      Re-scan
+                      <RotateCcw size={12} />
+                      Retake
                     </button>
                   </div>
                 </>
@@ -323,18 +359,19 @@ const Register = () => {
             </div>
           </div>
 
+          {/* Submit */}
           <button 
             type="submit"
             disabled={isSubmitting}
-            className={`w-full ${isSubmitting ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500 text-white'} font-black py-4 rounded-lg transition-all flex items-center justify-center gap-3 group/btn uppercase tracking-widest italic mt-8`}
+            className={`w-full mt-6 ${isSubmitting ? 'opacity-40 cursor-not-allowed' : ''} btn-primary justify-center py-4 text-sm`}
           >
-            {isSubmitting ? 'Processing_Record...' : 'Execute_Registration'}
-            {!isSubmitting && <ChevronRight className="group-hover/btn:translate-x-1 transition-transform" />}
+            {isSubmitting ? 'Creating Account...' : 'Create Account'}
+            {!isSubmitting && <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />}
           </button>
         </form>
 
-        <p className="mt-10 text-center font-mono text-xs text-slate-500">
-          ALREADY_MEMBER? <Link to="/login" className="text-blue-400 hover:underline hover:text-blue-300">AUTH_NOW</Link>
+        <p className="mt-8 text-center font-mono text-xs text-white/20">
+          Already a member? <Link to="/login" className="text-primary hover:text-primary/80 transition-colors duration-300">Sign In</Link>
         </p>
       </motion.div>
 

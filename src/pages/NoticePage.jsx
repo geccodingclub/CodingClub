@@ -22,7 +22,7 @@ const NoticePage = () => {
     }, []);
 
     return (
-        <div className="pt-32 pb-20 px-4 min-h-screen bg-slate-950">
+        <div className="pt-28 md:pt-32 pb-20 px-4 min-h-screen" style={{ background: '#050505' }}>
             <div className="max-w-5xl mx-auto">
                 <header className="mb-16">
                     <motion.div 
@@ -33,17 +33,17 @@ const NoticePage = () => {
                         <div className="w-12 h-12 bg-red-500/10 rounded-2xl flex items-center justify-center text-red-500 border border-red-500/20">
                             <Megaphone size={24} />
                         </div>
-                        <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase">Nexus<span className="text-red-500">_Broadcasts</span></h1>
+                        <h1 className="font-heading text-4xl md:text-5xl font-extrabold tracking-tight">Official <span className="text-red-500">Notices</span></h1>
                     </motion.div>
-                    <p className="text-slate-500 font-mono text-xs uppercase tracking-[0.3em] ml-16 underline underline-offset-8 decoration-red-500/30">
-                        Official updates from GEC Coding Club Command
+                    <p className="text-white/25 font-mono text-xs uppercase tracking-[0.2em] ml-16">
+                        Official updates from CORTEX Command
                     </p>
                 </header>
 
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-40 gap-4">
                         <Loader2 className="text-red-500 animate-spin" size={40} />
-                        <p className="font-mono text-xs text-slate-500 animate-pulse tracking-widest uppercase font-black">Decrypting_Broadcast_Stream...</p>
+                        <p className="font-mono text-[10px] text-white/25 animate-pulse tracking-[0.15em] uppercase font-bold">Loading notices...</p>
                     </div>
                 ) : notices.length > 0 ? (
                     <div className="space-y-6">

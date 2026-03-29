@@ -1,25 +1,252 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@300;400;500;700&display=swap');
 
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+/* ============================================
+   DESIGN SYSTEM: Deep Dark Theme
+   Base: #050505 | Surface: #0A0A0A
+   Accent: #3b82f6 (Electric Blue)
+   ============================================ */
+
 :root {
-  background-color: #020617;
-  color: #f8fafc;
+  --color-base: #050505;
+  --color-surface: #0A0A0A;
+  --color-surface-border: rgba(255, 255, 255, 0.1);
+  --color-accent: #3b82f6;
+  --color-accent-glow: rgba(59, 130, 246, 0.3);
+  --color-text-primary: #f0f0f0;
+  --color-text-secondary: #a0a0a0;
+  --color-text-muted: #666666;
+
+  background-color: var(--color-base);
+  color: var(--color-text-primary);
 }
 
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  -webkit-font-smoothing: antialiased;
+  background-color: var(--color-base);
+  overflow-x: hidden;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.font-heading {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.font-body {
+  font-family: 'Inter', sans-serif;
 }
 
 .font-mono {
   font-family: 'JetBrains Mono', monospace;
 }
 
+/* ============================================
+   SURFACE CARDS
+   ============================================ */
+
+.surface-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-surface-border);
+  border-radius: 16px;
+}
+
+.surface-card-hover {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-surface-border);
+  border-radius: 16px;
+  transition: all 0.3s ease;
+}
+
+.surface-card-hover:hover {
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.08);
+}
+
+/* ============================================
+   GLASSMORPHISM
+   ============================================ */
+
+.glass {
+  background: rgba(5, 5, 5, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.glass-strong {
+  background: rgba(5, 5, 5, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ============================================
+   CTA BUTTONS — Standardized
+   ============================================ */
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  background-color: var(--color-accent);
+  color: #fff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 25px var(--color-accent-glow), 0 4px 20px rgba(59, 130, 246, 0.2);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  background-color: transparent;
+  color: var(--color-text-primary);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  border-radius: 12px;
+  border: 1px solid var(--color-surface-border);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.btn-secondary:hover {
+  transform: scale(1.03);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 15px var(--color-accent-glow);
+  color: var(--color-accent);
+}
+
+.btn-white {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  background-color: #ffffff;
+  color: #050505;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.btn-white:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.15), 0 4px 20px rgba(59, 130, 246, 0.15);
+  background-color: #e8e8e8;
+}
+
+/* ============================================
+   MESH GRADIENT BACKGROUND
+   ============================================ */
+
+.mesh-gradient {
+  background: 
+    radial-gradient(ellipse at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 40% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+  background-size: 200% 200%;
+  animation: mesh-shift 8s ease-in-out infinite;
+}
+
+/* ============================================
+   COUNTDOWN TIMER
+   ============================================ */
+
+.countdown-digit {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 2rem;
+  line-height: 1;
+  color: #fff;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.05));
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  min-width: 4rem;
+  text-align: center;
+}
+
+.countdown-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.625rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 0.5rem;
+}
+
+/* ============================================
+   GLOW EFFECTS
+   ============================================ */
+
+.text-glow {
+  text-shadow: 0 0 20px rgba(59, 130, 246, 0.3), 0 0 60px rgba(59, 130, 246, 0.1);
+}
+
+.border-glow {
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.1), inset 0 0 15px rgba(59, 130, 246, 0.05);
+}
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-base);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ============================================
+   UTILITIES
+   ============================================ */
+
 .perspective-1000 {
   perspective: 1000px;
+}
+
+::selection {
+  background-color: rgba(59, 130, 246, 0.3);
+  color: #ffffff;
 }

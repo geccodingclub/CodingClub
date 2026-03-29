@@ -20,11 +20,13 @@ import NoticePage from './pages/NoticePage';
 import Resources from './pages/Resources';
 import ContestsPage from './pages/ContestsPage';
 import LeaderboardPage from './pages/LeaderboardPage';
+import CodeItRegister from './pages/CodeItRegister';
+import CodeItRulebook from './pages/CodeItRulebook';
 import './index.css';
 
 const ProtectedRoute = ({ children, roles }) => {
   const { user, loading } = useAuth();
-  if (loading) return <div className="min-h-screen flex items-center justify-center font-mono italic text-slate-500">Loading_System...</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center font-mono text-sm text-white/25">Loading...</div>;
   if (!user) return <Navigate to="/login" />;
   if (roles && !roles.includes(user.role)) return <Navigate to="/dashboard" />;
   return children;
@@ -73,6 +75,8 @@ const AnimatedRoutes = () => {
           </ProtectedRoute>
         } />
         <Route path="/resources" element={<PageWrapper><Resources /></PageWrapper>} />
+        <Route path="/codeit" element={<PageWrapper><CodeItRegister /></PageWrapper>} />
+        <Route path="/codeit/rulebook" element={<PageWrapper><CodeItRulebook /></PageWrapper>} />
         <Route path="/dashboard" element={
           <ProtectedRoute>
             <PageWrapper><Dashboard /></PageWrapper>
@@ -111,7 +115,7 @@ function App() {
     <AuthProvider>
       <NotificationProvider>
         <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-          <div className="min-h-screen relative text-slate-100 selection:bg-blue-500/30 overflow-x-hidden flex flex-col">
+          <div className="min-h-screen relative text-white/90 selection:bg-primary/30 overflow-x-hidden flex flex-col" style={{ backgroundColor: '#050505' }}>
             <Background />
             <Navbar />
             <div className="flex-grow">

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
-import { Mail, Lock, ChevronRight, Terminal as TerminalIcon } from 'lucide-react';
+import { Mail, Lock, ChevronRight } from 'lucide-react';
 import { useNotification } from '../context/NotificationContext';
 
 const Login = () => {
@@ -26,48 +26,55 @@ const Login = () => {
     }
   };
 
+  const inputWrapperClass = "flex items-center gap-3 px-4 py-3.5 rounded-xl focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/30 transition-all duration-300";
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <motion.div 
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-md bg-slate-900/60 backdrop-blur-xl p-10 rounded-2xl border border-white/5 shadow-2xl relative"
+        className="w-full max-w-md p-10 rounded-2xl shadow-2xl relative surface-card"
       >
-        <div className="absolute top-0 left-0 w-full h-1 bg-blue-600" />
+        {/* Top accent line */}
+        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent rounded-t-2xl" />
         
-        <div className="mb-12 flex flex-col items-center">
-          <div className="w-16 h-16 bg-blue-600/10 rounded-2xl flex items-center justify-center text-blue-500 mb-6 border border-blue-500/20">
-            <TerminalIcon size={32} />
-          </div>
-          <h2 className="text-3xl font-black italic tracking-tighter uppercase">Auth<span className="text-blue-500">_Portal</span></h2>
-          <p className="text-slate-500 font-mono text-xs mt-2 uppercase tracking-widest">// Identity verification required</p>
+        <div className="mb-10 flex flex-col items-center">
+          <img 
+            src="/logo.png" 
+            alt="CORTEX Logo" 
+            className="w-14 h-14 rounded-2xl object-contain mb-5" 
+          />
+          <h2 className="font-heading text-2xl font-extrabold tracking-tight">
+            Sign <span className="text-primary">In</span>
+          </h2>
+          <p className="text-white/25 font-mono text-[10px] mt-2 uppercase tracking-[0.15em]">Identity verification required</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-1">
-            <label className="text-[10px] font-mono text-slate-500 uppercase tracking-widest ml-1">Member_Email</label>
-            <div className="flex items-center gap-3 px-4 py-3 bg-slate-800/50 border border-white/5 rounded-lg focus-within:border-blue-500/50 transition-all">
-              <Mail size={18} className="text-slate-500" />
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="space-y-1.5">
+            <label className="font-mono text-[10px] text-white/25 font-bold uppercase tracking-[0.15em] ml-1">Email</label>
+            <div className={inputWrapperClass} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <Mail size={16} className="text-white/20" />
               <input
                 required
                 type="email"
-                placeholder="root@club.edu"
-                className="bg-transparent border-none outline-none w-full font-mono text-sm"
+                placeholder="you@email.com"
+                className="bg-transparent border-none outline-none w-full font-mono text-sm text-white/80 placeholder:text-white/15"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
           </div>
 
-          <div className="space-y-1">
-            <label className="text-[10px] font-mono text-slate-500 uppercase tracking-widest ml-1">Access_Key</label>
-            <div className="flex items-center gap-3 px-4 py-3 bg-slate-800/50 border border-white/5 rounded-lg focus-within:border-blue-500/50 transition-all">
-              <Lock size={18} className="text-slate-500" />
+          <div className="space-y-1.5">
+            <label className="font-mono text-[10px] text-white/25 font-bold uppercase tracking-[0.15em] ml-1">Password</label>
+            <div className={inputWrapperClass} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <Lock size={16} className="text-white/20" />
               <input
                 required
                 type="password"
-                placeholder="********"
-                className="bg-transparent border-none outline-none w-full font-mono text-sm"
+                placeholder="••••••••"
+                className="bg-transparent border-none outline-none w-full font-mono text-sm text-white/80 placeholder:text-white/15"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -76,15 +83,15 @@ const Login = () => {
 
           <button 
             disabled={loading}
-            className={`w-full ${loading ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500 text-white'} font-black py-4 rounded-lg transition-all flex items-center justify-center gap-3 group/btn uppercase tracking-widest italic mt-8`}
+            className={`w-full mt-6 ${loading ? 'opacity-40 cursor-not-allowed' : ''} btn-primary justify-center py-3.5 text-sm`}
           >
-            {loading ? 'Verifying_Identity...' : 'Access_Now'}
-            {!loading && <ChevronRight className="group-hover/btn:translate-x-1 transition-transform" />}
+            {loading ? 'Verifying...' : 'Sign In'}
+            {!loading && <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />}
           </button>
         </form>
 
-        <p className="mt-10 text-center font-mono text-xs text-slate-500">
-          NOT_REGISTERED? <Link to="/register" className="text-blue-400 hover:underline">NEW_SESSION</Link>
+        <p className="mt-8 text-center font-mono text-xs text-white/20">
+          Don't have an account? <Link to="/register" className="text-primary hover:text-primary/80 transition-colors duration-300">Register</Link>
         </p>
       </motion.div>
     </div>

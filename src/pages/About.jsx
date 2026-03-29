@@ -1,21 +1,22 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Target, Users, Zap, Shield, Sparkles, Code2 } from 'lucide-react';
+import { Target, Users, Zap, Sparkles, Github } from 'lucide-react';
+import TeamSection from '../components/TeamSection';
 
 const About = () => {
     const values = [
         {
-            icon: <Target className="text-blue-400" />,
+            icon: <Target size={24} className="text-primary" />,
             title: "Zero to One",
             desc: "We don't just optimize what exists; we build what doesn't. Our focus is on true innovation and first-principles thinking."
         },
         {
-            icon: <Zap className="text-purple-400" />,
+            icon: <Zap size={24} className="text-purple-400" />,
             title: "Rapid Iteration",
-            desc: "Build, breaking, and shipping. We believe in the power of fast feedback loops and constant learning."
+            desc: "Build, break, and ship. We believe in the power of fast feedback loops and constant learning."
         },
         {
-            icon: <Users className="text-pink-400" />,
+            icon: <Users size={24} className="text-cyan-400" />,
             title: "Deep Collaboration",
             desc: "Coding is a team sport. We foster an environment where silos are broken and collective intelligence thrives."
         }
@@ -27,28 +28,29 @@ const About = () => {
     ];
 
     return (
-        <div className="pt-32 pb-20 px-4">
+        <div className="pt-28 md:pt-32 pb-20 px-4">
             <div className="max-w-7xl mx-auto">
                 {/* Hero Section */}
-                <div className="text-center mb-32">
+                <div className="text-center mb-28">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black tracking-[0.3em] uppercase mb-8"
+                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary font-mono text-[10px] font-bold tracking-[0.2em] uppercase mb-8"
                     >
                         <Sparkles size={14} />
-                        <span>Our_Origin_Story</span>
+                        <span>Our Origin Story</span>
                     </motion.div>
                     
                     <motion.h1 
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="text-5xl md:text-8xl font-black mb-8 tracking-tighter italic"
+                        className="font-heading text-5xl md:text-7xl lg:text-8xl font-extrabold mb-8 tracking-tight"
+                        style={{ textShadow: '0 4px 30px rgba(0,0,0,0.5)' }}
                     >
                         More Than Just <br />
-                        <span className="bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">
-                            A_Coding_Club.
+                        <span className="bg-gradient-to-r from-primary via-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                            A Coding Club.
                         </span>
                     </motion.h1>
                     
@@ -56,15 +58,15 @@ const About = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="text-slate-400 max-w-2xl mx-auto font-mono text-lg leading-relaxed"
+                        className="text-white/35 max-w-2xl mx-auto font-mono text-sm md:text-base leading-relaxed"
                     >
-                        // We are a collective of thinkers, builders, and dreamers at GEC. <br />
-                        // Engineering the future, one pull request at a time.
+                        We are a collective of thinkers, builders, and dreamers at GEC Bhojpur.<br />
+                        think. code. evolve.
                     </motion.p>
                 </div>
 
                 {/* Values Grid */}
-                <div className="grid md:grid-cols-3 gap-8 mb-40">
+                <div className="grid md:grid-cols-3 gap-6 mb-32">
                     {values.map((value, i) => (
                         <motion.div
                             key={i}
@@ -73,27 +75,39 @@ const About = () => {
                             viewport={{ once: true }}
                             transition={{ delay: i * 0.1 }}
                             whileHover={{ y: -5 }}
-                            className="p-10 rounded-3xl bg-slate-900/40 border border-white/5 backdrop-blur-sm group hover:border-blue-500/30 transition-all"
+                            className="p-10 rounded-2xl group transition-all duration-300 surface-card-hover"
                         >
-                            <div className="w-14 h-14 rounded-2xl bg-slate-800 flex items-center justify-center mb-8 border border-white/5 group-hover:bg-blue-600/20 transition-colors">
+                            <div className="w-12 h-12 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center mb-8 group-hover:bg-primary/10 group-hover:border-primary/20 transition-all duration-300">
                                 {value.icon}
                             </div>
-                            <h3 className="text-2xl font-black mb-4 tracking-tight italic">{value.title}</h3>
-                            <p className="text-slate-400 font-mono text-sm leading-relaxed">{value.desc}</p>
+                            <h3 className="font-heading text-xl font-bold mb-3 text-white group-hover:text-primary transition-colors duration-300">{value.title}</h3>
+                            <p className="text-white/30 font-mono text-sm leading-relaxed">{value.desc}</p>
                         </motion.div>
                     ))}
                 </div>
 
                 {/* Philosophy Section */}
-                <div className="relative rounded-[3rem] overflow-hidden mb-40 border border-white/5 bg-slate-900/20 py-24 px-8 md:px-20 backdrop-blur-xl">
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5" />
-                    <div className="relative z-10 grid lg:grid-cols-2 gap-20 items-center">
+                <div 
+                    className="relative rounded-2xl lg:rounded-3xl overflow-hidden mb-32 py-20 px-8 md:px-16"
+                    style={{
+                        background: '#0A0A0A',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                    }}
+                >
+                    {/* Subtle gradient overlay */}
+                    <div className="absolute inset-0 opacity-30"
+                        style={{
+                            background: 'radial-gradient(ellipse at 30% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 50%)',
+                        }}
+                    />
+                    <div className="relative z-10 grid lg:grid-cols-2 gap-16 items-center">
                         <div>
-                            <h2 className="text-4xl md:text-6xl font-black mb-8 leading-tight italic">
-                                Why We Exist <br />
-                                <span className="text-blue-500">_Initiative 01</span>
+                            <h2 className="font-heading text-3xl md:text-5xl font-extrabold mb-8 leading-tight text-white">
+                                Why We Exist
+                                <br />
+                                <span className="text-primary">Initiative 01</span>
                             </h2>
-                            <div className="space-y-6 text-slate-400 font-mono text-base leading-relaxed">
+                            <div className="space-y-5 text-white/35 text-sm leading-relaxed">
                                 <p>
                                     Technical education often stops at the theory. We exist to bridge the chasm between academic learning and high-impact shipping.
                                 </p>
@@ -104,28 +118,38 @@ const About = () => {
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             {stats.map((stat, i) => (
-                                <div key={i} className="p-8 rounded-2xl bg-white/5 border border-white/5 text-center">
-                                    <p className="text-3xl font-black text-white mb-2 tracking-tighter italic">{stat.value}</p>
-                                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest leading-tight">{stat.label}</p>
+                                <div 
+                                    key={i} 
+                                    className="p-7 rounded-2xl text-center"
+                                    style={{
+                                        background: 'rgba(255,255,255,0.02)',
+                                        border: '1px solid rgba(255,255,255,0.06)',
+                                    }}
+                                >
+                                    <p className="font-heading text-3xl font-extrabold text-white mb-2">{stat.value}</p>
+                                    <p className="font-mono text-[10px] text-white/25 font-bold uppercase tracking-[0.15em] leading-tight">{stat.label}</p>
                                 </div>
                             ))}
                         </div>
                     </div>
                 </div>
 
+                {/* Team Section */}
+                <TeamSection />
+
                 {/* Call to Action */}
-                <div className="text-center">
+                <div className="text-center mt-8">
                     <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
                         className="inline-block"
                     >
                         <Link 
                             to="/register" 
-                            className="px-12 py-5 bg-white text-black rounded-2xl font-black text-xl hover:bg-blue-400 transition-all shadow-[0_20px_40px_rgba(255,255,255,0.1)] hover:shadow-blue-500/20 flex items-center gap-4"
+                            className="btn-white text-lg px-12 py-5 shadow-glow-lg"
                         >
-                            <Code2 />
-                            <span>Join_The_Movement</span>
+                            <Github size={22} />
+                            <span>Join The Movement</span>
                         </Link>
                     </motion.div>
                 </div>

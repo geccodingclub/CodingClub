@@ -1,14 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Rocket, LogIn, UserPlus, LogOut, LayoutDashboard, Menu, X } from 'lucide-react';
+import { LogIn, UserPlus, LogOut, LayoutDashboard, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-/*
-- Added **Submission Guards** (anti-double-click) to all forms and administrative actions to prevent duplicate data.
-- Implemented a **Responsive Mobile Navbar** with a smooth-transition slide-down drawer and premium Cyberpunk aesthetics.
-- Implemented a **Cyberpunk-styled Membership Card** using `html-to-image`.
-*/
 const Navbar = () => {
   const { user, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
@@ -21,61 +16,61 @@ const Navbar = () => {
     closeMenu();
   };
 
+  const navLinkClass = "relative text-white/60 hover:text-white transition-colors duration-300 py-2 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-primary after:transition-all after:duration-300 hover:after:w-full";
+
   return (
-    <nav className="border-b border-white/5 bg-slate-950/50 backdrop-blur-xl sticky top-0 z-50">
+    <nav 
+      className="sticky top-0 z-50 border-b border-white/[0.06]"
+      style={{ 
+        background: 'rgba(5, 5, 5, 0.7)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+      }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-20 items-center">
-          <Link to="/" onClick={closeMenu} className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center text-white transform group-hover:rotate-12 transition-transform">
-              <Rocket size={24} />
+        <div className="flex justify-between h-16 items-center">
+          <Link to="/" onClick={closeMenu} className="flex items-center gap-2.5 group">
+            <img 
+              src="/logo.png" 
+              alt="CORTEX Logo" 
+              className="w-9 h-9 rounded-lg object-contain group-hover:scale-110 transition-transform duration-300" 
+            />
+            <div className="flex flex-col leading-none">
+              <span className="text-[15px] font-heading font-extrabold tracking-wide uppercase text-white">
+                CORTEX
+              </span>
+              
             </div>
-            <span className="text-xl font-black tracking-tighter uppercase italic">
-              Coding<span className="text-blue-500">Club</span>
-            </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8 font-mono text-xs font-bold uppercase tracking-widest">
-            <Link to="/about" className="hover:text-blue-400 transition-colors py-2 underline-offset-8 hover:underline">
-              About
-            </Link>
-            <Link to="/events" className="hover:text-blue-400 transition-colors py-2 underline-offset-8 hover:underline">
-              Events
-            </Link>
-            <Link to="/notices" className="hover:text-blue-400 transition-colors py-2 underline-offset-8 hover:underline">
-              Notices
-            </Link>
-            <Link to="/contests" className="hover:text-blue-400 transition-colors py-2 underline-offset-8 hover:underline text-blue-400 relative">
+          <div className="hidden md:flex items-center gap-7 font-mono text-[11px] font-medium uppercase tracking-[0.15em]">
+            <Link to="/about" className={navLinkClass}>About</Link>
+            <Link to="/events" className={navLinkClass}>Events</Link>
+            <Link to="/notices" className={navLinkClass}>Notices</Link>
+            <Link to="/contests" className={`${navLinkClass} text-primary`}>
               Contests
-              <span className="absolute top-1 -right-4 w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+              <span className="absolute top-1 -right-3 w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
             </Link>
-            <Link to="/leaderboard" className="hover:text-yellow-400 transition-colors py-2 underline-offset-8 hover:underline text-yellow-500">
-              Rankings
-            </Link>
-            <Link to="/members" className="hover:text-blue-400 transition-colors py-2 underline-offset-8 hover:underline">
-              Members
-            </Link>
-            <Link to="/contact" className="hover:text-blue-400 transition-colors py-2 underline-offset-8 hover:underline">
-              Contact
-            </Link>
+            <Link to="/leaderboard" className={`${navLinkClass} text-amber-400 hover:text-amber-300`}>Rankings</Link>
+            <Link to="/members" className={navLinkClass}>Members</Link>
+            <Link to="/contact" className={navLinkClass}>Contact</Link>
             {user ? (
               <>
-                <Link to="/dashboard" className="flex items-center gap-2 hover:text-blue-400 transition-colors py-2">
-                  <LayoutDashboard size={16} />
-                  <span>[ Dashboard ]</span>
+                <Link to="/dashboard" className="flex items-center gap-2 text-white/60 hover:text-primary transition-colors duration-300 py-2">
+                  <LayoutDashboard size={14} />
+                  <span>Dashboard</span>
                 </Link>
-                <button onClick={logout} className="flex items-center gap-2 hover:text-red-400 transition-colors py-2">
-                  <LogOut size={16} />
-                  <span>[ Exit ]</span>
+                <button onClick={logout} className="flex items-center gap-2 text-white/40 hover:text-red-400 transition-colors duration-300 py-2">
+                  <LogOut size={14} />
+                  <span>Exit</span>
                 </button>
               </>
             ) : (
               <>
-                <Link to="/login" className="hover:text-blue-400 transition-colors py-2 underline-offset-8 hover:underline">
-                  Login
-                </Link>
-                <Link to="/register" className="bg-white text-black px-6 py-2.5 rounded hover:bg-slate-200 transition-all flex items-center gap-2">
-                  <span>Register</span>
+                <Link to="/login" className={navLinkClass}>Login</Link>
+                <Link to="/register" className="btn-primary text-[11px] tracking-[0.15em] uppercase px-5 py-2">
+                  Register
                 </Link>
               </>
             )}
@@ -85,9 +80,10 @@ const Navbar = () => {
           <div className="md:hidden flex items-center">
             <button 
               onClick={toggleMenu}
-              className="p-2 text-slate-400 hover:text-white transition-colors"
+              className="p-2 text-white/40 hover:text-white transition-colors duration-300"
+              aria-label="Toggle menu"
             >
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
+              {isOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
           </div>
         </div>
@@ -100,68 +96,76 @@ const Navbar = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-white/5 bg-slate-900/90 backdrop-blur-2xl overflow-hidden"
+            transition={{ duration: 0.25, ease: 'easeInOut' }}
+            className="md:hidden border-t border-white/[0.06] overflow-hidden"
+            style={{ 
+              background: 'rgba(5, 5, 5, 0.95)',
+              backdropFilter: 'blur(20px)',
+            }}
           >
-            <div className="px-4 py-8 space-y-4 font-mono text-sm uppercase tracking-[0.2em] font-black italic">
-                  <Link to="/about" onClick={closeMenu} className="block p-4 rounded-xl bg-white/5 border border-white/5 text-slate-300">
-                    About
-                  </Link>
-                  <Link to="/events" onClick={closeMenu} className="block p-4 rounded-xl bg-white/5 border border-white/5 text-slate-300">
-                    Events
-                  </Link>
-                  <Link to="/notices" onClick={closeMenu} className="block p-4 rounded-xl bg-white/5 border border-white/5 text-slate-300">
-                    Notices
-                  </Link>
-                  <Link to="/contests" onClick={closeMenu} className="block p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 font-bold">
-                    Contests [NEW]
-                  </Link>
-                  <Link to="/leaderboard" onClick={closeMenu} className="block p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 font-bold">
-                    Rankings
-                  </Link>
-                  <Link to="/members" onClick={closeMenu} className="block p-4 rounded-xl bg-white/5 border border-white/5 text-slate-300">
-                    Members
-                  </Link>
-                  <Link to="/contact" onClick={closeMenu} className="block p-4 rounded-xl bg-white/5 border border-white/5 text-slate-300">
-                    Contact
-                  </Link>
-                  {user ? (
-                    <>
-                      <Link 
-                        to="/dashboard" 
-                        onClick={closeMenu}
-                        className="flex items-center gap-4 p-4 rounded-xl bg-blue-600/10 border border-blue-500/20 text-blue-400"
-                      >
-                        <LayoutDashboard size={20} />
-                        Dashboard
-                      </Link>
-                  <button 
-                    onClick={handleLogout}
-                    className="w-full flex items-center gap-4 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500"
-                  >
-                    <LogOut size={20} />
-                    Exit_Session
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link 
-                    to="/login" 
-                    onClick={closeMenu}
-                    className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/5 text-slate-300"
-                  >
-                    <LogIn size={20} />
-                    Login
-                  </Link>
-                  <Link 
-                    to="/register" 
-                    onClick={closeMenu}
-                    className="flex items-center gap-4 p-4 rounded-xl bg-blue-600 text-white"
-                  >
-                    <UserPlus size={20} />
-                    Register
-                  </Link>
-                </>
-              )}
+            <div className="px-4 py-6 space-y-2 font-mono text-xs uppercase tracking-[0.15em] font-medium">
+              <Link to="/about" onClick={closeMenu} className="block p-3.5 rounded-xl surface-card-hover text-white/60 hover:text-white transition-all duration-300">
+                About
+              </Link>
+              <Link to="/events" onClick={closeMenu} className="block p-3.5 rounded-xl surface-card-hover text-white/60 hover:text-white transition-all duration-300">
+                Events
+              </Link>
+              <Link to="/notices" onClick={closeMenu} className="block p-3.5 rounded-xl surface-card-hover text-white/60 hover:text-white transition-all duration-300">
+                Notices
+              </Link>
+              <Link to="/contests" onClick={closeMenu} className="block p-3.5 rounded-xl bg-primary/5 border border-primary/20 text-primary font-bold">
+                Contests
+              </Link>
+              <Link to="/leaderboard" onClick={closeMenu} className="block p-3.5 rounded-xl bg-amber-500/5 border border-amber-500/20 text-amber-400 font-bold">
+                Rankings
+              </Link>
+              <Link to="/members" onClick={closeMenu} className="block p-3.5 rounded-xl surface-card-hover text-white/60 hover:text-white transition-all duration-300">
+                Members
+              </Link>
+              <Link to="/contact" onClick={closeMenu} className="block p-3.5 rounded-xl surface-card-hover text-white/60 hover:text-white transition-all duration-300">
+                Contact
+              </Link>
+
+              <div className="pt-3 border-t border-white/[0.06] space-y-2">
+                {user ? (
+                  <>
+                    <Link 
+                      to="/dashboard" 
+                      onClick={closeMenu}
+                      className="flex items-center gap-3 p-3.5 rounded-xl bg-primary/5 border border-primary/20 text-primary"
+                    >
+                      <LayoutDashboard size={18} />
+                      Dashboard
+                    </Link>
+                    <button 
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-red-500/5 border border-red-500/20 text-red-400"
+                    >
+                      <LogOut size={18} />
+                      Exit Session
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link 
+                      to="/login" 
+                      onClick={closeMenu}
+                      className="flex items-center gap-3 p-3.5 rounded-xl surface-card-hover text-white/60"
+                    >
+                      <LogIn size={18} />
+                      Login
+                    </Link>
+                    <Link 
+                      to="/register" 
+                      onClick={closeMenu}
+                      className="flex items-center gap-3 p-3.5 rounded-xl bg-primary text-white font-bold"
+                    >
+                      <UserPlus size={18} />
+                      Register
+                    </Link>
+                  </>
+                )}
+              </div>
             </div>
           </motion.div>
         )}

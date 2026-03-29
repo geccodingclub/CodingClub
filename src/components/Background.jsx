@@ -2,52 +2,63 @@ import { motion } from 'framer-motion';
 
 const Background = () => {
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden bg-slate-950">
-      {/* Grid Pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+    <div className="fixed inset-0 -z-10 overflow-hidden" style={{ backgroundColor: '#050505' }}>
+      {/* Subtle Grid Pattern */}
+      <div 
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: `linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)`,
+          backgroundSize: '60px 60px',
+        }}
+      />
+
+      {/* Radial Fade Mask */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,transparent_0%,#050505_100%)]" />
       
-      {/* Animated Glows */}
+      {/* Animated Accent Glows */}
       <motion.div 
         animate={{ 
-          scale: [1, 1.2, 1],
-          opacity: [0.3, 0.5, 0.3],
-          x: [0, 50, 0],
-          y: [0, -50, 0]
+          scale: [1, 1.3, 1],
+          opacity: [0.12, 0.2, 0.12],
+          x: [0, 40, 0],
+          y: [0, -30, 0]
         }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/20 blur-[80px] rounded-full"
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute -top-[15%] -left-[10%] w-[45%] h-[45%] rounded-full"
+        style={{ background: 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%)' }}
       />
       <motion.div 
         animate={{ 
           scale: [1.2, 1, 1.2],
-          opacity: [0.3, 0.5, 0.3],
-          x: [0, -50, 0],
-          y: [0, 50, 0]
+          opacity: [0.1, 0.18, 0.1],
+          x: [0, -40, 0],
+          y: [0, 30, 0]
         }}
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-500/20 blur-[80px] rounded-full"
+        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute -bottom-[15%] -right-[10%] w-[45%] h-[45%] rounded-full"
+        style={{ background: 'radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%)' }}
       />
 
-      {/* Floating Code Icons (Subtle) */}
-      <div className="absolute inset-0 select-none pointer-events-none opacity-20">
-        {[...Array(10)].map((_, i) => (
+      {/* Floating Code Fragments */}
+      <div className="absolute inset-0 select-none pointer-events-none opacity-[0.06]">
+        {[...Array(8)].map((_, i) => (
           <motion.div
             key={i}
-            initial={{ y: "100vh", x: Math.random() * 100 + "vw", opacity: 0 }}
+            initial={{ y: "110vh", x: `${10 + Math.random() * 80}vw`, opacity: 0 }}
             animate={{ 
               y: "-10vh",
-              opacity: [0, 1, 1, 0],
-              rotate: [0, 360]
+              opacity: [0, 0.6, 0.6, 0],
+              rotate: [0, 180]
             }}
             transition={{ 
-              duration: Math.random() * 10 + 10, 
+              duration: Math.random() * 15 + 15, 
               repeat: Infinity, 
               delay: Math.random() * 20,
               ease: "linear"
             }}
-            className="absolute text-blue-500/30 text-2xl font-mono"
+            className="absolute text-blue-500/40 text-lg font-mono"
           >
-            {['{ }', '< />', 'JSON', 'JSX', '=>', 'import', 'async'][i % 7]}
+            {['{ }', '</>', '( )', '=>', '[ ]', '/**/', '&&', '||'][i % 8]}
           </motion.div>
         ))}
       </div>
