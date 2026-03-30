@@ -28,9 +28,9 @@ const Footer = () => {
     ];
 
     const socialLinks = [
-        { icon: <Instagram size={18} />, url: 'https://instagram.com/geccodingclub', label: 'Instagram' },
-        { icon: <Linkedin size={18} />, url: 'https://linkedin.com/company/geccodingclub', label: 'LinkedIn' },
-        { icon: <MessageCircle size={18} />, url: 'https://chat.whatsapp.com/geccodingclub', label: 'WhatsApp' },
+        { icon: <Instagram size={18} />, url: 'https://www.instagram.com/cortex_gec_bhj/', label: 'Instagram' },
+        { icon: <Linkedin size={18} />, url: 'https://www.linkedin.com/company/cortex-gec-bhojpur/', label: 'LinkedIn' },
+        { icon: <MessageCircle size={18} />, url: 'https://chat.whatsapp.com/DE6tIZb43IyGUZ3pTbQIjs', label: 'WhatsApp' },
         { icon: <Github size={18} />, url: 'https://github.com/geccodingclub', label: 'GitHub' },
         { icon: <Mail size={18} />, url: 'mailto:geccodingclub@gmail.com', label: 'Email' },
     ];
