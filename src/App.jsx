@@ -26,8 +26,9 @@ import './index.css';
 
 const ProtectedRoute = ({ children, roles }) => {
   const { user, loading } = useAuth();
+  const location = useLocation();
   if (loading) return <div className="min-h-screen flex items-center justify-center font-mono text-sm text-white/25">Loading...</div>;
-  if (!user) return <Navigate to="/login" />;
+  if (!user) return <Navigate to={`/login?redirect=${location.pathname}`} />;
   if (roles && !roles.includes(user.role)) return <Navigate to="/dashboard" />;
   return children;
 };

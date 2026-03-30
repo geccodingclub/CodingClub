@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Mail, Lock, Fingerprint, BookOpen, Calendar, ChevronRight, Phone, Camera, RotateCcw, Upload, Image as ImageIcon, UserPlus } from 'lucide-react';
@@ -96,6 +96,8 @@ const Register = () => {
   const { register } = useAuth();
   const { showNotification } = useNotification();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get('redirect') || '/dashboard';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -109,7 +111,7 @@ const Register = () => {
     try {
       await register(formData);
       showNotification('Registration successful. Welcome to the club!');
-      navigate('/dashboard');
+      navigate(redirectTo);
     } catch (err) {
       const msg = err.response?.data?.message || err.response?.data?.error || 'Registration failed. Please try again.';
       showNotification(msg, 'error');
@@ -371,7 +373,7 @@ const Register = () => {
         </form>
 
         <p className="mt-8 text-center font-mono text-xs text-white/20">
-          Already a member? <Link to="/login" className="text-primary hover:text-primary/80 transition-colors duration-300">Sign In</Link>
+          Already a member? <Link to={`/login${redirectTo !== '/dashboard' ? `?redirect=${redirectTo}` : ''}`} className="text-primary hover:text-primary/80 transition-colors duration-300">Sign In</Link>
         </p>
       </motion.div>
 

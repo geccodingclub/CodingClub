@@ -159,11 +159,11 @@ const CodeItRegister = () => {
             Please login or create an account first.
           </p>
           <div className="flex flex-col gap-3">
-            <Link to="/login" className="btn-primary justify-center py-3 text-sm">
+            <Link to="/login?redirect=/codeit" className="btn-primary justify-center py-3 text-sm">
               <LogIn size={16} />
               Sign In
             </Link>
-            <Link to="/register" className="btn-secondary justify-center py-3 text-sm">
+            <Link to="/register?redirect=/codeit" className="btn-secondary justify-center py-3 text-sm">
               Create Account
             </Link>
           </div>

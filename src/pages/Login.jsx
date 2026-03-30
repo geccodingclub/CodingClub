@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 import { Mail, Lock, ChevronRight } from 'lucide-react';
@@ -12,6 +12,8 @@ const Login = () => {
   const { showNotification } = useNotification();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get('redirect') || '/dashboard';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,7 +21,7 @@ const Login = () => {
     try {
       await login(email, password);
       showNotification('Access authorized. Welcome back.');
-      navigate('/dashboard');
+      navigate(redirectTo);
     } catch (err) {
       showNotification(err.response?.data?.message || 'Authorization failed. Check credentials.', 'error');
       setLoading(false);
@@ -91,7 +93,7 @@ const Login = () => {
         </form>
 
         <p className="mt-8 text-center font-mono text-xs text-white/20">
-          Don't have an account? <Link to="/register" className="text-primary hover:text-primary/80 transition-colors duration-300">Register</Link>
+          Don't have an account? <Link to={`/register${redirectTo !== '/dashboard' ? `?redirect=${redirectTo}` : ''}`} className="text-primary hover:text-primary/80 transition-colors duration-300">Register</Link>
         </p>
       </motion.div>
     </div>
