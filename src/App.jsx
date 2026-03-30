@@ -27,6 +27,10 @@ import CompleteProfile from './pages/CompleteProfile';
 import './index.css';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+console.log('Google Client ID found:', GOOGLE_CLIENT_ID ? 'YES' : 'NO');
+if (!GOOGLE_CLIENT_ID) {
+  console.warn('CRITICAL: VITE_GOOGLE_CLIENT_ID is not defined in your .env file! Please check client/.env');
+}
 
 const ProtectedRoute = ({ children, roles }) => {
   const { user, loading } = useAuth();
