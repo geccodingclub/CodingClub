@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Mail, Lock, Fingerprint, BookOpen, Calendar, ChevronRight, Phone, Camera, RotateCcw, Upload, Image as ImageIcon, UserPlus } from 'lucide-react';
 import { useNotification } from '../context/NotificationContext';
+import { GoogleLogin } from '@react-oauth/google';
 import Webcam from 'react-webcam';
 import ImageCropper from '../components/ImageCropper';
 
@@ -93,11 +94,33 @@ const Register = () => {
     setImgSrc(null);
     setFormData(prev => ({ ...prev, profilePhoto: '' }));
   };
-  const { register } = useAuth();
+  const { register, loginWithGoogle } = useAuth();
   const { showNotification } = useNotification();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/dashboard';
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setIsSubmitting(true);
+    try {
+      const data = await loginWithGoogle(credentialResponse.credential);
+      const user = data.user;
+      showNotification(`Welcome, ${user.name}!`);
+      if (!user.isProfileComplete) {
+        navigate(`/complete-profile${redirectTo !== '/dashboard' ? `?redirect=${redirectTo}` : ''}`);
+      } else {
+        navigate(redirectTo);
+      }
+    } catch (err) {
+      showNotification(err.response?.data?.message || 'Google sign-in failed.', 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    showNotification('Google sign-in was cancelled or failed.', 'error');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -143,6 +166,28 @@ const Register = () => {
             Create <span className="text-primary">Account</span>
           </h2>
           <p className="text-white/25 font-mono text-xs">Join the CORTEX community at GEC Bhojpur</p>
+        </div>
+
+        {/* Google Sign In */}
+        <div className="mb-6">
+          <div className="flex justify-center [&>div]:w-full">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              theme="filled_black"
+              shape="pill"
+              size="large"
+              width="360"
+              text="signup_with"
+            />
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="flex items-center gap-4 mb-6">
+          <div className="flex-1 h-px bg-white/[0.06]" />
+          <span className="font-mono text-[9px] text-white/15 uppercase tracking-[0.2em]">or register with email</span>
+          <div className="flex-1 h-px bg-white/[0.06]" />
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">

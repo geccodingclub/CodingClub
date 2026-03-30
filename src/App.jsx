@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { useEffect } from 'react';
 import Lenis from '@studio-freight/lenis';
 import { AnimatePresence, motion } from 'framer-motion';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
 import Landing from './pages/Landing';
@@ -22,13 +23,19 @@ import ContestsPage from './pages/ContestsPage';
 import LeaderboardPage from './pages/LeaderboardPage';
 import CodeItRegister from './pages/CodeItRegister';
 import CodeItRulebook from './pages/CodeItRulebook';
+import CompleteProfile from './pages/CompleteProfile';
 import './index.css';
+
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
 const ProtectedRoute = ({ children, roles }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
   if (loading) return <div className="min-h-screen flex items-center justify-center font-mono text-sm text-white/25">Loading...</div>;
   if (!user) return <Navigate to={`/login?redirect=${location.pathname}`} />;
+  if (user.isProfileComplete === false && location.pathname !== '/complete-profile') {
+    return <Navigate to={`/complete-profile?redirect=${location.pathname}`} />;
+  }
   if (roles && !roles.includes(user.role)) return <Navigate to="/dashboard" />;
   return children;
 };
@@ -78,6 +85,11 @@ const AnimatedRoutes = () => {
         <Route path="/resources" element={<PageWrapper><Resources /></PageWrapper>} />
         <Route path="/codeit" element={<PageWrapper><CodeItRegister /></PageWrapper>} />
         <Route path="/codeit/rulebook" element={<PageWrapper><CodeItRulebook /></PageWrapper>} />
+        <Route path="/complete-profile" element={
+          <ProtectedRoute>
+            <PageWrapper><CompleteProfile /></PageWrapper>
+          </ProtectedRoute>
+        } />
         <Route path="/dashboard" element={
           <ProtectedRoute>
             <PageWrapper><Dashboard /></PageWrapper>
@@ -113,6 +125,7 @@ function App() {
   }, []);
 
   return (
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
     <AuthProvider>
       <NotificationProvider>
         <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
@@ -127,6 +140,7 @@ function App() {
         </BrowserRouter>
       </NotificationProvider>
     </AuthProvider>
+    </GoogleOAuthProvider>
   );
 }
 

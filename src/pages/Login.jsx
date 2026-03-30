@@ -4,11 +4,12 @@ import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 import { Mail, Lock, ChevronRight } from 'lucide-react';
 import { useNotification } from '../context/NotificationContext';
+import { GoogleLogin } from '@react-oauth/google';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const { showNotification } = useNotification();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -26,6 +27,28 @@ const Login = () => {
       showNotification(err.response?.data?.message || 'Authorization failed. Check credentials.', 'error');
       setLoading(false);
     }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setLoading(true);
+    try {
+      const data = await loginWithGoogle(credentialResponse.credential);
+      const user = data.user;
+      showNotification(`Welcome${user.isProfileComplete ? ' back' : ''}, ${user.name}!`);
+      if (!user.isProfileComplete) {
+        navigate(`/complete-profile${redirectTo !== '/dashboard' ? `?redirect=${redirectTo}` : ''}`);
+      } else {
+        navigate(redirectTo);
+      }
+    } catch (err) {
+      showNotification(err.response?.data?.message || 'Google sign-in failed.', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    showNotification('Google sign-in was cancelled or failed.', 'error');
   };
 
   const inputWrapperClass = "flex items-center gap-3 px-4 py-3.5 rounded-xl focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/30 transition-all duration-300";
@@ -50,6 +73,28 @@ const Login = () => {
             Sign <span className="text-primary">In</span>
           </h2>
           <p className="text-white/25 font-mono text-[10px] mt-2 uppercase tracking-[0.15em]">Identity verification required</p>
+        </div>
+
+        {/* Google Sign In */}
+        <div className="mb-6">
+          <div className="flex justify-center [&>div]:w-full">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              theme="filled_black"
+              shape="pill"
+              size="large"
+              width="360"
+              text="continue_with"
+            />
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="flex items-center gap-4 mb-6">
+          <div className="flex-1 h-px bg-white/[0.06]" />
+          <span className="font-mono text-[9px] text-white/15 uppercase tracking-[0.2em]">or continue with email</span>
+          <div className="flex-1 h-px bg-white/[0.06]" />
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
