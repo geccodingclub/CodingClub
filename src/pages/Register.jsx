@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Mail, Lock, Fingerprint, BookOpen, Calendar, ChevronRight, Phone, Camera, RotateCcw, Upload, Image as ImageIcon, UserPlus } from 'lucide-react';
 import { useNotification } from '../context/NotificationContext';
-import { GoogleLogin } from '@react-oauth/google';
+import GoogleSignInButton from '../components/GoogleSignInButton';
 import Webcam from 'react-webcam';
 import ImageCropper from '../components/ImageCropper';
 
@@ -94,33 +94,11 @@ const Register = () => {
     setImgSrc(null);
     setFormData(prev => ({ ...prev, profilePhoto: '' }));
   };
-  const { register, loginWithGoogle } = useAuth();
+  const { register } = useAuth();
   const { showNotification } = useNotification();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/dashboard';
-
-  const handleGoogleSuccess = async (credentialResponse) => {
-    setIsSubmitting(true);
-    try {
-      const data = await loginWithGoogle(credentialResponse.credential);
-      const user = data.user;
-      showNotification(`Welcome, ${user.name}!`);
-      if (!user.isProfileComplete) {
-        navigate(`/complete-profile${redirectTo !== '/dashboard' ? `?redirect=${redirectTo}` : ''}`);
-      } else {
-        navigate(redirectTo);
-      }
-    } catch (err) {
-      showNotification(err.response?.data?.message || 'Google sign-in failed.', 'error');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleGoogleError = () => {
-    showNotification('Google sign-in was cancelled or failed.', 'error');
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -170,17 +148,7 @@ const Register = () => {
 
         {/* Google Sign In */}
         <div className="mb-6">
-          <div className="flex justify-center [&>div]:w-full">
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              theme="filled_black"
-              shape="pill"
-              size="large"
-              width="360"
-              text="signup_with"
-            />
-          </div>
+          <GoogleSignInButton redirectTo={redirectTo} text="Sign up with Google" />
         </div>
 
         {/* Divider */}

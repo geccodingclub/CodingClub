@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 import { Mail, Lock, ChevronRight } from 'lucide-react';
 import { useNotification } from '../context/NotificationContext';
-import { GoogleLogin } from '@react-oauth/google';
+import GoogleSignInButton from '../components/GoogleSignInButton';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -29,27 +29,7 @@ const Login = () => {
     }
   };
 
-  const handleGoogleSuccess = async (credentialResponse) => {
-    setLoading(true);
-    try {
-      const data = await loginWithGoogle(credentialResponse.credential);
-      const user = data.user;
-      showNotification(`Welcome${user.isProfileComplete ? ' back' : ''}, ${user.name}!`);
-      if (!user.isProfileComplete) {
-        navigate(`/complete-profile${redirectTo !== '/dashboard' ? `?redirect=${redirectTo}` : ''}`);
-      } else {
-        navigate(redirectTo);
-      }
-    } catch (err) {
-      showNotification(err.response?.data?.message || 'Google sign-in failed.', 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const handleGoogleError = () => {
-    showNotification('Google sign-in was cancelled or failed.', 'error');
-  };
 
   const inputWrapperClass = "flex items-center gap-3 px-4 py-3.5 rounded-xl focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/30 transition-all duration-300";
 
@@ -77,17 +57,7 @@ const Login = () => {
 
         {/* Google Sign In */}
         <div className="mb-6">
-          <div className="flex justify-center [&>div]:w-full  ">
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              theme="filled_black"
-              shape="pill"
-              size="large"
-              width="360"
-              text="continue_with"
-            />
-          </div>
+          <GoogleSignInButton redirectTo={redirectTo} text="Continue with Google" />
         </div>
 
         {/* Divider */}
