@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Trophy, Medal, Star, Award, TrendingUp } from 'lucide-react';
 import api from '../api/axios';
+import { Link } from 'react-router-dom';
 
 const LeaderboardPage = () => {
   const [users, setUsers] = useState([]);
@@ -36,6 +37,13 @@ const LeaderboardPage = () => {
         <p className="text-slate-400 font-mono text-sm uppercase tracking-widest max-w-2xl">
           Top performers in our coding challenges. Keep pushing boundaries.
         </p>
+        <Link
+          to="/contests"
+          className="inline-flex items-center gap-2 mt-4 px-5 py-2.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-semibold text-sm transition-colors"
+        >
+          <TrendingUp className="w-4 h-4" />
+          Participate in Contests
+        </Link>
       </motion.div>
 
       {loading ? (
