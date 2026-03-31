@@ -15,7 +15,7 @@ const Resources = () => {
             id: 'web-dev',
             title: "Web Development",
             icon: <Globe className="text-blue-400" />,
-            author: "Coding Club SDG",
+            author: "Cortex SDG",
             tags: ["Frontend", "Backend", "Fullstack"],
             description: "Master the art of building modern, scalable web applications using the latest technologies.",
             link: "#",
@@ -204,7 +204,7 @@ const Resources = () => {
             id: 'web3',
             title: "Web3 & Blockchain",
             icon: <Layers className="text-purple-400" />,
-            author: "Coding Club SDG",
+            author: "Cortex SDG",
             tags: ["Smart Contracts", "DeFi", "Solidity"],
             description: "Decentralize the future. Learn about blockchain architecture and smart contract development.",
             link: "#"
@@ -213,7 +213,7 @@ const Resources = () => {
             id: 'app-dev',
             title: "App Development",
             icon: <Smartphone className="text-pink-400" />,
-            author: "Coding Club SDG",
+            author: "Cortex SDG",
             tags: ["Flutter", "React Native", "Native"],
             description: "Build high-performance, cross-platform mobile applications that users love.",
             link: "#"
@@ -222,7 +222,7 @@ const Resources = () => {
             id: 'cp',
             title: "Competitive Programming",
             icon: <Terminal className="text-emerald-400" />,
-            author: "Coding Club CP Wing",
+            author: "Cortex CP Wing",
             tags: ["Algorithms", "DS", "Problem Solving"],
             description: "Sharpen your analytical skills and master complex data structures and algorithms.",
             link: "#"
@@ -231,7 +231,7 @@ const Resources = () => {
             id: 'ml',
             title: "Machine Learning",
             icon: <Cpu className="text-orange-400" />,
-            author: "Coding Club AI Wing",
+            author: "Cortex AI Wing",
             tags: ["Data Science", "Neural Networks", "NLP"],
             description: "Dive into the world of artificial intelligence and build models that learn from data.",
             link: "#"
@@ -240,7 +240,7 @@ const Resources = () => {
             id: 'devops',
             title: "DevOps & Cloud",
             icon: <Database className="text-cyan-400" />,
-            author: "Coding Club Systems Wing",
+            author: "Cortex Systems Wing",
             tags: ["Docker", "CI/CD", "AWS/GCP"],
             description: "Automate and scale. Learn the modern tools for deployment and infrastructure management.",
             link: "#"

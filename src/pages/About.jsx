@@ -50,7 +50,7 @@ const About = () => {
                     >
                         More Than Just <br />
                         <span className="bg-gradient-to-r from-primary via-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                            A Coding Club.
+                            A Cortex.
                         </span>
                     </motion.h1>
                     
