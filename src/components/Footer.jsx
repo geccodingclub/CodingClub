@@ -37,7 +37,7 @@ const Footer = () => {
 
     return (
         <footer 
-            className="relative mt-20 border-t border-white/[0.06] pt-16 pb-8 overflow-hidden"
+            className="relative mt-20 border-t border-white/[0.12] pt-16 pb-8 overflow-hidden"
             style={{ background: '#050505' }}
         >
             {/* Top Glow Line */}
@@ -60,10 +60,10 @@ const Footer = () => {
                                
                             </div>
                         </Link>
-                        <p className="text-white/30 font-mono text-xs max-w-xs mb-2 leading-relaxed">
+                        <p className="text-white/60 font-mono text-xs max-w-xs mb-2 leading-relaxed">
                             think. code. evolve.
                         </p>
-                        <p className="text-white/20 font-mono text-[10px] max-w-xs mb-8 leading-relaxed">
+                        <p className="text-white/50 font-mono text-[10px] max-w-xs mb-8 leading-relaxed">
                             The premier student developer community at GEC Bhojpur.
                         </p>
 
@@ -76,7 +76,7 @@ const Footer = () => {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     whileHover={{ y: -3, scale: 1.1 }}
-                                    className="w-9 h-9 rounded-lg bg-white/[0.03] border border-white/[0.06] flex items-center justify-center text-white/30 hover:text-white hover:border-primary/30 hover:bg-primary/10 transition-all duration-300"
+                                    className="w-9 h-9 rounded-lg bg-white/[0.06] border border-white/[0.12] flex items-center justify-center text-white/55 hover:text-white hover:border-primary/40 hover:bg-primary/10 transition-all duration-300"
                                     aria-label={social.label}
                                 >
                                     {social.icon}
@@ -88,7 +88,7 @@ const Footer = () => {
                     {/* Links Sections */}
                     {footerLinks.map((section, i) => (
                         <div key={i}>
-                            <h4 className="text-[11px] font-heading font-bold uppercase tracking-[0.15em] text-white/50 mb-5">
+                            <h4 className="text-[11px] font-heading font-bold uppercase tracking-[0.15em] text-white/70 mb-5">
                                 {section.title}
                             </h4>
                             <ul className="space-y-3">
@@ -99,7 +99,7 @@ const Footer = () => {
                                                 href={link.path}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="text-white/25 hover:text-primary transition-colors duration-300 font-mono text-xs flex items-center gap-2 group"
+                                                className="text-white/55 hover:text-primary transition-colors duration-300 font-mono text-xs flex items-center gap-2 group"
                                             >
                                                 {link.name}
                                                 <ArrowUpRight size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -107,7 +107,7 @@ const Footer = () => {
                                         ) : (
                                             <Link 
                                                 to={link.path}
-                                                className="text-white/25 hover:text-primary transition-colors duration-300 font-mono text-xs flex items-center gap-2 group"
+                                                className="text-white/55 hover:text-primary transition-colors duration-300 font-mono text-xs flex items-center gap-2 group"
                                             >
                                                 {link.name}
                                                 <ArrowUpRight size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -121,12 +121,12 @@ const Footer = () => {
                 </div>
 
                 {/* Bottom Bar */}
-                <div className="pt-6 border-t border-white/[0.04] flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p className="text-white/20 font-mono text-[10px] uppercase tracking-[0.15em]">
+                <div className="pt-6 border-t border-white/[0.10] flex flex-col md:flex-row justify-between items-center gap-4">
+                    <p className="text-white/45 font-mono text-[10px] uppercase tracking-[0.15em]">
                         © {currentYear} CORTEX — GEC Bhojpur. All rights reserved.
                     </p>
                     <div className="flex items-center gap-4">
-                        <p className="text-white/15 font-mono text-[10px] uppercase tracking-[0.1em] flex items-center gap-1.5">
+                        <p className="text-white/40 font-mono text-[10px] uppercase tracking-[0.1em] flex items-center gap-1.5">
                             Built with
                             <Heart size={10} className="text-red-500 animate-pulse" fill="currentColor" />
                             by CORTEX
@@ -135,7 +135,7 @@ const Footer = () => {
                             href="https://github.com/Abudarda12" 
                             target="_blank" 
                             rel="noopener noreferrer" 
-                            className="flex items-center gap-1.5 text-white/15 hover:text-primary transition-colors duration-300 font-mono text-[10px] uppercase tracking-[0.1em] group"
+                            className="flex items-center gap-1.5 text-white/40 hover:text-primary transition-colors duration-300 font-mono text-[10px] uppercase tracking-[0.1em] group"
                         >
                             <span>@Abudarda</span>
                             <ArrowUpRight size={8} className="opacity-0 group-hover:opacity-100 transition-opacity" />
