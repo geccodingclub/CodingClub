@@ -24,6 +24,8 @@ import LeaderboardPage from './pages/LeaderboardPage';
 import CodeItRegister from './pages/CodeItRegister';
 import CodeItRulebook from './pages/CodeItRulebook';
 import CompleteProfile from './pages/CompleteProfile';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 import './index.css';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
@@ -99,6 +101,8 @@ const AnimatedRoutes = () => {
             <PageWrapper><Dashboard /></PageWrapper>
           </ProtectedRoute>
         } />
+        <Route path="/privacy" element={<PageWrapper><PrivacyPolicy /></PageWrapper>} />
+        <Route path="/terms" element={<PageWrapper><TermsOfService /></PageWrapper>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AnimatePresence>

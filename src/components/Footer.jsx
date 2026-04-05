@@ -22,6 +22,8 @@ const Footer = () => {
                 { name: 'Resources Hub', path: '/resources' },
                 { name: 'Open Source', path: 'https://github.com/geccodingclub' },
                 { name: 'Contests', path: '/contests' },
+                { name: 'Privacy Policy', path: '/privacy' },
+                { name: 'Terms of Service', path: '/terms' },
                 { name: 'Contact Us', path: '/contact' }
             ]
         }
