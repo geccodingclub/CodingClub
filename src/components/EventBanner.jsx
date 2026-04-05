@@ -11,6 +11,30 @@ const EventBanner = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
 
+  const deadlineDate = new Date('2026-04-10T23:59:59');
+  
+  function getTimeLeft() {
+    const now = new Date();
+    const diff = deadlineDate - now;
+    if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, expired: true };
+    return {
+      days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+      minutes: Math.floor((diff / (1000 * 60)) % 60),
+      seconds: Math.floor((diff / 1000) % 60),
+      expired: false,
+    };
+  }
+
+  const [timeLeft, setTimeLeft] = useState(getTimeLeft());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(getTimeLeft());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   useEffect(() => {
     // Hide banner on the registration page or rulebook to avoid clutter
     if (location.pathname === '/codeit' || location.pathname === '/codeit/rulebook') {
@@ -62,8 +86,16 @@ const EventBanner = () => {
                 <Trophy size={20} className="text-primary" />
               </div>
               <div>
-                <h4 className="font-heading font-extrabold text-white text-sm">CodeIt Registration is Open!</h4>
-                <p className="text-[10px] sm:text-xs font-mono text-slate-400">Compete in the ultimate coding showdown at GEC Bhojpur.</p>
+                <h4 className="font-heading font-extrabold text-white text-sm flex items-center gap-2 flex-wrap">
+                  CodeIt Registration is Open!
+                  {!timeLeft.expired && (
+                    <span className="bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded text-[10px] uppercase font-mono tracking-widest flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                      {timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m {String(timeLeft.seconds).padStart(2, '0')}s
+                    </span>
+                  )}
+                </h4>
+                <p className="text-[10px] sm:text-xs font-mono text-slate-400 mt-1">Compete in the ultimate coding showdown at GEC Bhojpur.</p>
               </div>
             </div>
             
