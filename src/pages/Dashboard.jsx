@@ -239,14 +239,25 @@ const Dashboard = () => {
            </div>
             <div>
               <h1 className="text-2xl md:text-4xl font-black italic tracking-tighter uppercase leading-none">Console<span className="text-blue-500">_Output</span></h1>
-              <div className="flex items-center gap-4 mt-1">
+              <div className="flex flex-wrap items-center gap-4 mt-2">
                 <p className="text-slate-500 font-mono text-[10px] md:text-xs uppercase tracking-widest">// Logged in as: {user.name} ({user.role})</p>
-                <button 
-                  onClick={() => setShowCardModal(true)}
-                  className="px-2 py-0.5 bg-blue-600/10 border border-blue-500/30 rounded text-[8px] md:text-[10px] font-black uppercase tracking-widest text-blue-400 hover:bg-blue-600 hover:text-white transition-all italic"
-                >
-                  View_ID_Nexus
-                </button>
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={() => setShowCardModal(true)}
+                    className="px-2 py-0.5 bg-blue-600/10 border border-blue-500/30 rounded text-[8px] md:text-[10px] font-black uppercase tracking-widest text-blue-400 hover:bg-blue-600 hover:text-white transition-all italic"
+                  >
+                    View_ID_Nexus
+                  </button>
+                  {(user.role === 'VOLUNTEER' || user.role === 'PRESIDENT') && (
+                    <button 
+                      onClick={() => setShowEditModal(true)}
+                      className="px-2 py-0.5 bg-slate-600/10 border border-slate-500/30 rounded text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-400 hover:bg-slate-600 hover:text-white transition-all italic flex items-center gap-1"
+                    >
+                      <Settings size={10} />
+                      Edit_Profile
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
         </div>

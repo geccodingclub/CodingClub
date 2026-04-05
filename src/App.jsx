@@ -17,6 +17,7 @@ import NotFound from './pages/NotFound';
 import Background from './components/Background';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import EventBanner from './components/EventBanner';
 import NoticePage from './pages/NoticePage';
 import Resources from './pages/Resources';
 import ContestsPage from './pages/ContestsPage';
@@ -143,6 +144,7 @@ function App() {
             <div className="flex-grow">
               <AnimatedRoutes />
             </div>
+            <EventBanner />
             <Footer />
           </div>
         </BrowserRouter>
