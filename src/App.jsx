@@ -43,6 +43,9 @@ const ProtectedRoute = ({ children, roles }) => {
   if (user.isProfileComplete === false && location.pathname !== '/complete-profile') {
     return <Navigate to={`/complete-profile?redirect=${location.pathname}`} />;
   }
+  if (user.isProfileComplete !== false && location.pathname === '/complete-profile') {
+    return <Navigate to="/dashboard" />;
+  }
   if (roles && !roles.includes(user.role)) return <Navigate to="/dashboard" />;
   return children;
 };
