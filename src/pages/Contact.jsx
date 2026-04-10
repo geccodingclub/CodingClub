@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Send, Mail, MapPin, Globe, Loader2, Sparkles, MessageCircle } from 'lucide-react';
 import axios from 'axios';
 
+
 const Contact = () => {
     const [formData, setFormData] = useState({
         name: '',

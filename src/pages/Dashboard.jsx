@@ -7,7 +7,7 @@ import { CheckCircle, Clock, ShieldCheck, Users, Search, Code, Cpu, Terminal as 
 import { useNotification } from '../context/NotificationContext';
 import MemberCard from '../components/MemberCard';
 import EditProfileModal from '../components/EditProfileModal';
-import { User as UserIcon, Settings, Camera, Download } from 'lucide-react';
+import { User as UserIcon, Settings, Camera, Download, QrCode } from 'lucide-react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import download from 'downloadjs';
 
@@ -514,6 +514,7 @@ const Dashboard = () => {
                     <th className="px-6 py-4 uppercase tracking-widest">Language</th>
                     <th className="px-6 py-4 uppercase tracking-widest">HackerRank</th>
                     <th className="px-6 py-4 uppercase tracking-widest">Date</th>
+                    <th className="px-6 py-4 uppercase tracking-widest text-center">Check-In</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
@@ -560,11 +561,28 @@ const Dashboard = () => {
                       <td className="px-6 py-4 text-slate-500 text-[10px]">
                         {new Date(reg.createdAt).toLocaleDateString()}
                       </td>
+                      <td className="px-6 py-4 flex justify-center">
+                        <button
+                          disabled={processing}
+                          onClick={() => handleCodeItCheckIn(reg._id)}
+                          className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded text-[10px] uppercase font-black transition-all tracking-widest w-full sm:w-auto ${
+                            reg.isCheckedIn 
+                              ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border border-emerald-500/30' 
+                              : 'bg-white/5 hover:bg-blue-500/20 text-slate-300 hover:text-blue-400 border border-white/5 hover:border-blue-500/30'
+                          }`}
+                        >
+                          {reg.isCheckedIn ? (
+                            <><CheckCircle size={12} /> IN</>
+                          ) : (
+                            <><QrCode size={12} /> Check</>
+                          )}
+                        </button>
+                      </td>
                     </tr>
                   ))}
                   {codeItRegistrations.length === 0 && (
                     <tr>
-                      <td colSpan="7" className="px-6 py-8 text-center text-slate-500 font-mono italic uppercase">No registrations yet</td>
+                      <td colSpan="8" className="px-6 py-8 text-center text-slate-500 font-mono italic uppercase">No registrations yet</td>
                     </tr>
                   )}
                 </tbody>
@@ -962,18 +980,34 @@ const Dashboard = () => {
                     </div>
                   </div>
                   {codeItStatus.registration && (
-                    <div className="grid grid-cols-3 gap-3 mb-4">
-                      <div className="p-3 rounded-lg bg-white/5 border border-white/5">
-                        <p className="font-mono text-[8px] text-slate-500 uppercase tracking-widest mb-1">Reg. No.</p>
-                        <p className="font-mono text-xs text-slate-200 font-bold">{codeItStatus.registration.registrationNumber}</p>
+                    <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-4">
+                      <div className="grid grid-cols-3 gap-3 w-full">
+                        <div className="p-3 rounded-lg bg-white/5 border border-white/5">
+                          <p className="font-mono text-[8px] text-slate-500 uppercase tracking-widest mb-1">Reg. No.</p>
+                          <p className="font-mono text-xs text-slate-200 font-bold">{codeItStatus.registration.registrationNumber}</p>
+                        </div>
+                        <div className="p-3 rounded-lg bg-white/5 border border-white/5">
+                          <p className="font-mono text-[8px] text-slate-500 uppercase tracking-widest mb-1">Language</p>
+                          <p className="font-mono text-xs text-slate-200 font-bold">{codeItStatus.registration.programmingLanguage}</p>
+                        </div>
+                        <div className="p-3 rounded-lg bg-white/5 border border-white/5">
+                          <p className="font-mono text-[8px] text-slate-500 uppercase tracking-widest mb-1">Registered</p>
+                          <p className="font-mono text-xs text-slate-200 font-bold">{new Date(codeItStatus.registration.createdAt).toLocaleDateString()}</p>
+                        </div>
                       </div>
-                      <div className="p-3 rounded-lg bg-white/5 border border-white/5">
-                        <p className="font-mono text-[8px] text-slate-500 uppercase tracking-widest mb-1">Language</p>
-                        <p className="font-mono text-xs text-slate-200 font-bold">{codeItStatus.registration.programmingLanguage}</p>
-                      </div>
-                      <div className="p-3 rounded-lg bg-white/5 border border-white/5">
-                        <p className="font-mono text-[8px] text-slate-500 uppercase tracking-widest mb-1">Registered</p>
-                        <p className="font-mono text-xs text-slate-200 font-bold">{new Date(codeItStatus.registration.createdAt).toLocaleDateString()}</p>
+
+                      <div className="shrink-0 p-3 rounded-xl bg-white/5 border border-white/10 flex flex-col items-center">
+                        <p className="font-mono text-[8px] text-emerald-400 font-black uppercase tracking-widest mb-2 flex flex-col items-center gap-1">
+                          <QrCode size={12} />
+                          Entry Ticket
+                        </p>
+                        <div className="w-24 h-24 sm:w-28 sm:h-28 bg-white p-1.5 rounded-lg border border-white/20">
+                          <img 
+                            src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${codeItStatus.registration._id}`} 
+                            alt="QR Ticket" 
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
                       </div>
                     </div>
                   )}
