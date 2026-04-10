@@ -185,16 +185,15 @@ const Dashboard = () => {
   const handleDownloadTicket = async () => {
     if (!ticketRef.current) return;
     try {
-      // Ensure the background renders correctly in the downloaded image
       const dataUrl = await toPng(ticketRef.current, { 
         cacheBust: true, 
-        backgroundColor: '#0f172a',
-        pixelRatio: 2 // High resolution
+        backgroundColor: '#050505',
+        pixelRatio: 3 // Ultra-high resolution for stories
       });
-      download(dataUrl, `CodeIt-Pass-${user.name.replace(/\s+/g, '')}.png`);
+      download(dataUrl, `CodeIt-Status-${user.name.replace(/\s+/g, '')}.png`);
     } catch (err) {
       console.error(err);
-      showNotification('Failed to export ticket', 'error');
+      showNotification('Failed to export status card', 'error');
     }
   };
 
@@ -1019,69 +1018,87 @@ const Dashboard = () => {
                     </div>
                   </div>
                   {codeItStatus.registration && (
-                    <div className="flex flex-col gap-6 mb-4">
-                      {/* Interactive Ticket Card */}
-                      <div className="relative p-[1px] rounded-2xl bg-gradient-to-br from-blue-500/50 via-primary/30 to-blue-500/10 max-w-md shadow-2xl">
+                    <div className="flex flex-col gap-6 mb-4 items-center sm:items-start">
+                      {/* Interactive Ticket Card - Status Story Format */}
+                      <div className="relative p-[1px] rounded-[32px] bg-gradient-to-br from-surface-border via-white/5 to-transparent shadow-[0_20px_50px_rgba(0,0,0,0.5)] w-[320px] shrink-0">
                         <div 
                           ref={ticketRef} 
-                          className="relative p-8 rounded-2xl bg-[#0f172a] border border-white/5 overflow-hidden flex flex-col font-mono"
+                          className="relative w-full aspect-[9/16] rounded-[32px] bg-base border border-surface-border overflow-hidden flex flex-col font-heading justify-between p-8 pt-12 pb-10"
                         >
-                          {/* Checked In Overlay */}
-                          {codeItStatus.registration.isCheckedIn && (
-                            <div className="absolute inset-0 bg-emerald-900/80 backdrop-blur-[3px] border-[6px] border-emerald-500 z-20 flex flex-col items-center justify-center rounded-[14px]">
-                              <div className="w-20 h-20 rounded-full bg-emerald-500/20 flex flex-col items-center justify-center mb-4">
-                                <CheckCircle size={48} className="text-emerald-400" />
+                          {/* Background aesthetics */}
+                          <div className="absolute top-[-10%] right-[-20%] w-[300px] h-[300px] bg-white opacity-[0.015] rounded-full blur-3xl pointer-events-none" />
+                          <div className="absolute bottom-[-10%] left-[-20%] w-[300px] h-[300px] bg-primary opacity-[0.05] rounded-full blur-3xl pointer-events-none" />
+                          
+                          {/* Header / Brand */}
+                          <div className="relative z-10 flex flex-col items-center">
+                             <div className="w-20 h-20 bg-surface border border-surface-border rounded-2xl flex flex-col items-center justify-center mb-6 shadow-xl">
+                               <TerminalIcon size={32} className="text-primary mb-1" />
+                             </div>
+                             <h1 className="text-3xl font-black text-white tracking-tighter uppercase whitespace-nowrap">CODE<span className="text-primary">IT</span></h1>
+                             <p className="text-[10px] font-mono text-white/40 tracking-[0.4em] mt-2 font-bold">CORTEX EVENT</p>
+                          </div>
+                          
+                          {/* User Info */}
+                          <div className="relative z-10 flex flex-col items-center flex-1 justify-center space-y-4 w-full text-center mt-2">
+                              <div className="w-full bg-surface border border-surface-border px-6 py-6 rounded-2xl backdrop-blur-md shadow-lg">
+                                <p className="text-[11px] text-primary uppercase font-bold tracking-[0.2em] mb-2">Participant</p>
+                                <p className="text-2xl text-white font-black uppercase leading-[1.1] truncate w-full tracking-tight">{user.name}</p>
                               </div>
-                              <h2 className="text-3xl font-black text-emerald-400 rotate-[-10deg] uppercase tracking-tighter shadow-lg bg-[#0f172a] px-6 py-2 border-2 border-emerald-500/50 rounded-xl">CHECKED IN</h2>
+                              <div className="grid grid-cols-2 gap-3 w-full">
+                                <div className="bg-surface border border-surface-border p-5 rounded-2xl shadow-lg">
+                                  <p className="text-[10px] text-white/50 uppercase font-mono font-bold tracking-widest mb-1.5">Reg No.</p>
+                                  <p className="text-base text-white font-black tracking-wider truncate">{codeItStatus.registration.registrationNumber}</p>
+                                </div>
+                                <div className="bg-surface border border-surface-border p-5 rounded-2xl shadow-lg">
+                                  <p className="text-[10px] text-white/50 uppercase font-mono font-bold tracking-widest mb-1.5">Track</p>
+                                  <p className="text-base text-primary font-black uppercase truncate">{codeItStatus.registration.programmingLanguage}</p>
+                                </div>
+                              </div>
+                          </div>
+
+                          {/* Footer */}
+                          <div className="relative z-10 w-full pt-8 border-t-[1px] border-surface-border mt-8 text-center flex flex-col items-center gap-2">
+                              <p className="text-[9px] text-white/30 font-bold uppercase tracking-[0.3em]">GECA BHOJPUR</p>
+                              <div className="flex gap-1">
+                                {[...Array(5)].map((_, i) => (
+                                  <div key={i} className="w-1 h-1 rounded-full bg-surface-border"></div>
+                                ))}
+                              </div>
+                          </div>
+
+                          {/* Checked In Status Overlay */}
+                          {codeItStatus.registration.isCheckedIn && (
+                            <div className="absolute inset-0 bg-base/85 backdrop-blur-md z-20 flex flex-col items-center justify-center pointer-events-none rounded-[32px] border-4 border-emerald-500/50 p-6 overflow-hidden">
+                              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[80px] rounded-full" />
+                              <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/10 blur-[80px] rounded-full" />
+                              
+                              <div className="relative w-28 h-28 rounded-full bg-surface border border-emerald-500/30 flex items-center justify-center mb-8 shadow-[0_0_40px_rgba(16,185,129,0.2)]">
+                                <CheckCircle size={64} className="text-emerald-400" />
+                              </div>
+                              
+                              <div className="relative z-10 w-[120%] flex items-center justify-center rotate-[-12deg] mb-8">
+                                <h2 className="text-5xl font-black text-emerald-400 uppercase tracking-tighter px-10 py-4 bg-surface border-4 border-emerald-500/50 rounded-2xl shadow-[0_0_60px_rgba(16,185,129,0.4)] whitespace-nowrap">
+                                  ATTENDED
+                                </h2>
+                              </div>
+                              
                               {codeItStatus.registration.checkInTime && (
-                                <p className="mt-4 text-[10px] text-emerald-300 font-bold tracking-widest bg-[#0f172a] px-3 py-1.5 rounded-md border border-emerald-500/20">
-                                  {new Date(codeItStatus.registration.checkInTime).toLocaleString()}
-                                </p>
+                                <div className="absolute bottom-12 px-6 py-3 bg-surface border border-emerald-500/30 rounded-xl shadow-lg mt-10">
+                                  <p className="text-[11px] text-emerald-400 font-mono font-bold tracking-[0.2em] uppercase">
+                                    {new Date(codeItStatus.registration.checkInTime).toLocaleString()}
+                                  </p>
+                                </div>
                               )}
                             </div>
                           )}
-
-                          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 to-primary" />
-                          <h1 className="text-2xl font-black italic uppercase tracking-tighter text-white mb-1">
-                            <span className="text-blue-500">CodeIt</span>_Ticket
-                          </h1>
-                          <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-8 border-b border-white/10 pb-3 w-full">CORTEX Event Pass</p>
-                          
-                          <div className="flex flex-col sm:flex-row w-full gap-8 items-center sm:items-start">
-                            <div className="w-36 h-36 bg-white p-2 rounded-xl border-4 border-slate-700 shrink-0 shadow-xl">
-                              <img 
-                                src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${codeItStatus.registration._id}`} 
-                                alt="QR Ticket" 
-                                className="w-full h-full object-contain"
-                              />
-                            </div>
-                            
-                            <div className="flex-1 flex flex-col gap-4 w-full text-center sm:text-left">
-                              <div>
-                                <p className="text-[10px] text-blue-400 uppercase tracking-widest mb-0.5">Participant</p>
-                                <p className="text-base text-slate-100 font-bold uppercase truncate">{user.name}</p>
-                              </div>
-                              <div>
-                                <p className="text-[10px] text-blue-400 uppercase tracking-widest mb-0.5">Reg No.</p>
-                                <p className="text-sm text-slate-300 tracking-wider font-bold">{codeItStatus.registration.registrationNumber}</p>
-                              </div>
-                              <div>
-                                <p className="text-[10px] text-blue-400 uppercase tracking-widest mb-1">Language Track</p>
-                                <p className="text-xs text-slate-100 font-bold tracking-widest uppercase px-3 py-1 bg-blue-500/20 border border-blue-500/30 rounded inline-block">
-                                  {codeItStatus.registration.programmingLanguage}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-
                         </div>
                       </div>
 
                       <button 
                         onClick={handleDownloadTicket}
-                        className="self-start text-[10px] font-black text-white bg-blue-600 hover:bg-blue-500 transition-colors uppercase tracking-widest px-6 py-4 rounded-xl flex items-center gap-3 shadow-lg shadow-blue-500/20 border border-blue-400/30"
+                        className="text-xs font-black text-white bg-primary hover:bg-primary/80 transition-colors uppercase tracking-[0.2em] px-8 py-5 rounded-2xl flex items-center justify-center gap-3 shadow-glow mt-2 w-[320px]"
                       >
-                        <Download size={16} /> Download Digital Pass
+                        <Download size={18} /> Share on Status
                       </button>
                     </div>
                   )}
