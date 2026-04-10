@@ -7,7 +7,9 @@ import { CheckCircle, Clock, ShieldCheck, Users, Search, Code, Cpu, Terminal as 
 import { useNotification } from '../context/NotificationContext';
 import MemberCard from '../components/MemberCard';
 import EditProfileModal from '../components/EditProfileModal';
-import { User as UserIcon, Settings } from 'lucide-react';
+import { User as UserIcon, Settings, Camera, Download } from 'lucide-react';
+import { Html5QrcodeScanner } from 'html5-qrcode';
+import download from 'downloadjs';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -32,6 +34,7 @@ const Dashboard = () => {
   const [codeItStatus, setCodeItStatus] = useState({ isRegistered: false, registration: null, loading: true });
   const [codeItRegistrations, setCodeItRegistrations] = useState([]);
   const [codeItSearch, setCodeItSearch] = useState('');
+  const [showQrScanner, setShowQrScanner] = useState(false);
 
   useEffect(() => {
     if (user && (user.role === 'VOLUNTEER' || user.role === 'PRESIDENT')) {
@@ -126,6 +129,55 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCodeItCheckIn = async (id) => {
+    setProcessing(true);
+    try {
+      const res = await API.put(`/codeit/checkin/${id}`);
+      showNotification(res.data.message);
+      fetchCodeItRegistrations();
+    } catch (err) {
+      showNotification(err.response?.data?.message || 'Check-in failed', 'error');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  useEffect(() => {
+    if (showQrScanner) {
+      const scanner = new Html5QrcodeScanner('qr-reader', { fps: 10, qrbox: { width: 250, height: 250 } }, false);
+      scanner.render((text) => {
+        scanner.clear();
+        setShowQrScanner(false);
+        handleCodeItCheckIn(text);
+      }, () => { /* ignore */ });
+
+      return () => {
+        scanner.clear().catch(e => console.log('Clear failed', e));
+      };
+    }
+  }, [showQrScanner]);
+
+  const downloadCodeItCSV = () => {
+    const headers = ['Name', 'Email', 'Roll_No', 'Branch', 'Reg_No', 'Language', 'Checked_In', 'Check_In_Time'];
+    const rows = codeItRegistrations.map(reg => [
+      reg.user?.name,
+      reg.user?.email,
+      reg.user?.rollNo,
+      reg.user?.department,
+      reg.registrationNumber,
+      reg.programmingLanguage,
+      reg.isCheckedIn ? 'YES' : 'NO',
+      reg.checkInTime ? new Date(reg.checkInTime).toLocaleString() : 'N/A'
+    ]);
+
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(e => e.map(item => `"${(item || '').toString().replace(/"/g, '""')}"`).join(','))
+    ].join('\n');
+
+    download(csvContent, 'CodeIt_Registrations.csv', 'text/csv');
   };
 
   const handleVerify = async (id) => {
@@ -416,18 +468,41 @@ const Dashboard = () => {
                 <span className="ml-2 px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold">
                   {codeItRegistrations.length}
                 </span>
+                <span className="ml-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold">
+                  {codeItRegistrations.filter(r => r.isCheckedIn).length} IN
+                </span>
               </h2>
-              <div className="relative w-full sm:w-auto">
-                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-                <input 
-                  type="text" 
-                  placeholder="Search participant..." 
-                  value={codeItSearch}
-                  onChange={(e) => setCodeItSearch(e.target.value)}
-                  className="pl-9 pr-4 py-2 bg-slate-800/50 border border-white/10 rounded-lg text-xs font-mono text-slate-200 focus:outline-none focus:border-blue-500/50 w-full sm:w-64 transition-all"
-                />
+              <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+                <button
+                  onClick={() => setShowQrScanner(!showQrScanner)}
+                  className="bg-blue-600/20 text-blue-400 border border-blue-500/30 hover:bg-blue-600 hover:text-white transition-all px-3 py-2 rounded-lg flex items-center gap-2 text-xs font-bold uppercase tracking-widest"
+                >
+                  <Camera size={14} /> Scanner
+                </button>
+                <button
+                  onClick={downloadCodeItCSV}
+                  className="bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-600 hover:text-white transition-all px-3 py-2 rounded-lg flex items-center gap-2 text-xs font-bold uppercase tracking-widest"
+                >
+                  <Download size={14} /> CSV
+                </button>
+                <div className="relative w-full sm:w-auto">
+                  <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                  <input 
+                    type="text" 
+                    placeholder="Search participant..." 
+                    value={codeItSearch}
+                    onChange={(e) => setCodeItSearch(e.target.value)}
+                    className="pl-9 pr-4 py-2 bg-slate-800/50 border border-white/10 rounded-lg text-xs font-mono text-slate-200 focus:outline-none focus:border-blue-500/50 w-full sm:w-64 transition-all"
+                  />
+                </div>
               </div>
             </div>
+            {showQrScanner && (
+              <div className="p-6 border-b border-white/5 bg-slate-900/50 flex flex-col items-center">
+                <p className="text-blue-400 font-mono text-xs uppercase tracking-widest mb-4">Point Mobile QR at Camera Scanner</p>
+                <div id="qr-reader" className="w-full max-w-sm bg-white rounded-xl overflow-hidden shadow-2xl pb-4 border-2 border-dashed border-blue-500/30" />
+              </div>
+            )}
             <div className="overflow-x-auto max-h-[500px] overflow-y-auto">
               <table className="w-full text-left font-mono text-xs">
                 <thead>
