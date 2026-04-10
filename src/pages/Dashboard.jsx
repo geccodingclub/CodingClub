@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { toPng } from 'html-to-image';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import API from '../api/axios';
@@ -12,6 +13,7 @@ import { Html5QrcodeScanner } from 'html5-qrcode';
 import download from 'downloadjs';
 
 const Dashboard = () => {
+  const ticketRef = useRef(null);
   const { user } = useAuth();
   const { showNotification } = useNotification();
   const [students, setStudents] = useState([]);
@@ -145,19 +147,56 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    if (showQrScanner) {
-      const scanner = new Html5QrcodeScanner('qr-reader', { fps: 10, qrbox: { width: 250, height: 250 } }, false);
-      scanner.render((text) => {
-        scanner.clear();
-        setShowQrScanner(false);
-        handleCodeItCheckIn(text);
-      }, () => { /* ignore */ });
+    let scanner = null;
 
+    if (showQrScanner) {
+      // Defer rendering slightly to guarantee the 'qr-reader' div is fully painted in the DOM
+      const timer = setTimeout(() => {
+        scanner = new Html5QrcodeScanner('qr-reader', { fps: 10, qrbox: { width: 250, height: 250 } }, false);
+        
+        let hasScanned = false;
+        scanner.render((text) => {
+          // Prevent multiple scans of the same code
+          if (hasScanned) return;
+          hasScanned = true;
+          
+          // Clear first to let library destroy video tracks, THEN destroy our React markup
+          scanner.clear().then(() => {
+            setShowQrScanner(false);
+            handleCodeItCheckIn(text);
+          }).catch(err => {
+            console.error('Failed to clear scanner:', err);
+            setShowQrScanner(false);
+          });
+
+        }, () => { /* ignore scan cycle failures naturally */ });
+      }, 100);
+
+      // Cleanup on component unmount or state toggle
       return () => {
-        scanner.clear().catch(e => console.log('Clear failed', e));
+        clearTimeout(timer);
+        if (scanner) {
+          scanner.clear().catch(e => console.log('Cleanup clear failed', e));
+        }
       };
     }
   }, [showQrScanner]);
+
+  const handleDownloadTicket = async () => {
+    if (!ticketRef.current) return;
+    try {
+      // Ensure the background renders correctly in the downloaded image
+      const dataUrl = await toPng(ticketRef.current, { 
+        cacheBust: true, 
+        backgroundColor: '#0f172a',
+        pixelRatio: 2 // High resolution
+      });
+      download(dataUrl, `CodeIt-Pass-${user.name.replace(/\s+/g, '')}.png`);
+    } catch (err) {
+      console.error(err);
+      showNotification('Failed to export ticket', 'error');
+    }
+  };
 
   const downloadCodeItCSV = () => {
     const headers = ['Name', 'Email', 'Roll_No', 'Branch', 'Reg_No', 'Language', 'Checked_In', 'Check_In_Time'];
@@ -980,35 +1019,70 @@ const Dashboard = () => {
                     </div>
                   </div>
                   {codeItStatus.registration && (
-                    <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-4">
-                      <div className="grid grid-cols-3 gap-3 w-full">
-                        <div className="p-3 rounded-lg bg-white/5 border border-white/5">
-                          <p className="font-mono text-[8px] text-slate-500 uppercase tracking-widest mb-1">Reg. No.</p>
-                          <p className="font-mono text-xs text-slate-200 font-bold">{codeItStatus.registration.registrationNumber}</p>
-                        </div>
-                        <div className="p-3 rounded-lg bg-white/5 border border-white/5">
-                          <p className="font-mono text-[8px] text-slate-500 uppercase tracking-widest mb-1">Language</p>
-                          <p className="font-mono text-xs text-slate-200 font-bold">{codeItStatus.registration.programmingLanguage}</p>
-                        </div>
-                        <div className="p-3 rounded-lg bg-white/5 border border-white/5">
-                          <p className="font-mono text-[8px] text-slate-500 uppercase tracking-widest mb-1">Registered</p>
-                          <p className="font-mono text-xs text-slate-200 font-bold">{new Date(codeItStatus.registration.createdAt).toLocaleDateString()}</p>
+                    <div className="flex flex-col gap-6 mb-4">
+                      {/* Interactive Ticket Card */}
+                      <div className="relative p-[1px] rounded-2xl bg-gradient-to-br from-blue-500/50 via-primary/30 to-blue-500/10 max-w-md shadow-2xl">
+                        <div 
+                          ref={ticketRef} 
+                          className="relative p-8 rounded-2xl bg-[#0f172a] border border-white/5 overflow-hidden flex flex-col font-mono"
+                        >
+                          {/* Checked In Overlay */}
+                          {codeItStatus.registration.isCheckedIn && (
+                            <div className="absolute inset-0 bg-emerald-900/80 backdrop-blur-[3px] border-[6px] border-emerald-500 z-20 flex flex-col items-center justify-center rounded-[14px]">
+                              <div className="w-20 h-20 rounded-full bg-emerald-500/20 flex flex-col items-center justify-center mb-4">
+                                <CheckCircle size={48} className="text-emerald-400" />
+                              </div>
+                              <h2 className="text-3xl font-black text-emerald-400 rotate-[-10deg] uppercase tracking-tighter shadow-lg bg-[#0f172a] px-6 py-2 border-2 border-emerald-500/50 rounded-xl">CHECKED IN</h2>
+                              {codeItStatus.registration.checkInTime && (
+                                <p className="mt-4 text-[10px] text-emerald-300 font-bold tracking-widest bg-[#0f172a] px-3 py-1.5 rounded-md border border-emerald-500/20">
+                                  {new Date(codeItStatus.registration.checkInTime).toLocaleString()}
+                                </p>
+                              )}
+                            </div>
+                          )}
+
+                          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 to-primary" />
+                          <h1 className="text-2xl font-black italic uppercase tracking-tighter text-white mb-1">
+                            <span className="text-blue-500">CodeIt</span>_Ticket
+                          </h1>
+                          <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-8 border-b border-white/10 pb-3 w-full">CORTEX Event Pass</p>
+                          
+                          <div className="flex flex-col sm:flex-row w-full gap-8 items-center sm:items-start">
+                            <div className="w-36 h-36 bg-white p-2 rounded-xl border-4 border-slate-700 shrink-0 shadow-xl">
+                              <img 
+                                src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${codeItStatus.registration._id}`} 
+                                alt="QR Ticket" 
+                                className="w-full h-full object-contain"
+                              />
+                            </div>
+                            
+                            <div className="flex-1 flex flex-col gap-4 w-full text-center sm:text-left">
+                              <div>
+                                <p className="text-[10px] text-blue-400 uppercase tracking-widest mb-0.5">Participant</p>
+                                <p className="text-base text-slate-100 font-bold uppercase truncate">{user.name}</p>
+                              </div>
+                              <div>
+                                <p className="text-[10px] text-blue-400 uppercase tracking-widest mb-0.5">Reg No.</p>
+                                <p className="text-sm text-slate-300 tracking-wider font-bold">{codeItStatus.registration.registrationNumber}</p>
+                              </div>
+                              <div>
+                                <p className="text-[10px] text-blue-400 uppercase tracking-widest mb-1">Language Track</p>
+                                <p className="text-xs text-slate-100 font-bold tracking-widest uppercase px-3 py-1 bg-blue-500/20 border border-blue-500/30 rounded inline-block">
+                                  {codeItStatus.registration.programmingLanguage}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
                         </div>
                       </div>
 
-                      <div className="shrink-0 p-3 rounded-xl bg-white/5 border border-white/10 flex flex-col items-center">
-                        <p className="font-mono text-[8px] text-emerald-400 font-black uppercase tracking-widest mb-2 flex flex-col items-center gap-1">
-                          <QrCode size={12} />
-                          Entry Ticket
-                        </p>
-                        <div className="w-24 h-24 sm:w-28 sm:h-28 bg-white p-1.5 rounded-lg border border-white/20">
-                          <img 
-                            src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${codeItStatus.registration._id}`} 
-                            alt="QR Ticket" 
-                            className="w-full h-full object-contain"
-                          />
-                        </div>
-                      </div>
+                      <button 
+                        onClick={handleDownloadTicket}
+                        className="self-start text-[10px] font-black text-white bg-blue-600 hover:bg-blue-500 transition-colors uppercase tracking-widest px-6 py-4 rounded-xl flex items-center gap-3 shadow-lg shadow-blue-500/20 border border-blue-400/30"
+                      >
+                        <Download size={16} /> Download Digital Pass
+                      </button>
                     </div>
                   )}
                   <Link to="/codeit/rulebook" className="inline-flex items-center gap-2 text-primary font-mono text-[10px] uppercase tracking-[0.15em] hover:text-primary/80 transition-colors">
