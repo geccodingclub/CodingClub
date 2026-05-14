@@ -37,6 +37,7 @@ const Dashboard = () => {
   const [codeItRegistrations, setCodeItRegistrations] = useState([]);
   const [codeItSearch, setCodeItSearch] = useState('');
   const [showQrScanner, setShowQrScanner] = useState(false);
+  const [codeItSettings, setCodeItSettings] = useState({ hackerrankLink: '', isLinkPublished: false });
 
   useEffect(() => {
     if (user && (user.role === 'VOLUNTEER' || user.role === 'PRESIDENT')) {
@@ -48,6 +49,7 @@ const Dashboard = () => {
     }
     if (user && user.role === 'PRESIDENT') {
       fetchMembers();
+      fetchCodeItSettings();
     }
     if (user) {
       fetchEvents();
@@ -87,9 +89,29 @@ const Dashboard = () => {
   const fetchCodeItStatus = async () => {
     try {
       const res = await API.get('/codeit/status');
-      setCodeItStatus({ isRegistered: res.data.isRegistered, registration: res.data.registration, loading: false });
+      setCodeItStatus({ isRegistered: res.data.isRegistered, registration: res.data.registration, hackerrankLink: res.data.hackerrankLink, loading: false });
     } catch (err) {
       setCodeItStatus(prev => ({ ...prev, loading: false }));
+    }
+  };
+
+  const fetchCodeItSettings = async () => {
+    try {
+      const res = await API.get('/codeit/settings');
+      setCodeItSettings({ hackerrankLink: res.data.hackerrankLink || '', isLinkPublished: res.data.isLinkPublished || false });
+    } catch (err) { console.error(err); }
+  };
+
+  const handleUpdateCodeItSettings = async (e) => {
+    e.preventDefault();
+    setProcessing(true);
+    try {
+      await API.put('/codeit/settings', codeItSettings);
+      showNotification('CodeIt settings updated');
+    } catch (err) {
+      showNotification('Failed to update settings', 'error');
+    } finally {
+      setProcessing(false);
     }
   };
 
@@ -631,6 +653,50 @@ const Dashboard = () => {
           {/* President Special Sections */}
           {user.role === 'PRESIDENT' && (
             <div className="mt-12 space-y-12">
+              {/* CodeIt Configuration Console */}
+              <div className="bg-slate-900/60 backdrop-blur-xl rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
+                <div className="p-6 border-b border-white/5 flex justify-between items-center bg-white/5">
+                  <h2 className="text-sm font-black uppercase tracking-widest italic flex items-center gap-2">
+                    <Code size={16} className="text-yellow-500" />
+                    CodeIt_Configuration
+                  </h2>
+                </div>
+                <div className="p-6">
+                  <form onSubmit={handleUpdateCodeItSettings} className="space-y-6 font-mono text-xs max-w-xl">
+                    <div className="space-y-2">
+                      <label className="text-slate-500 uppercase tracking-widest">HackerRank Contest Link</label>
+                      <input 
+                        type="url" 
+                        className="w-full bg-slate-800/50 border border-white/10 rounded-lg p-3 text-slate-200 focus:border-yellow-500 outline-none transition-all"
+                        placeholder="https://www.hackerrank.com/contests/..."
+                        value={codeItSettings.hackerrankLink}
+                        onChange={(e) => setCodeItSettings({...codeItSettings, hackerrankLink: e.target.value})}
+                      />
+                    </div>
+                    <div className="flex items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/10">
+                      <input 
+                        type="checkbox"
+                        id="isLinkPublished"
+                        className="w-4 h-4 accent-yellow-500"
+                        checked={codeItSettings.isLinkPublished}
+                        onChange={(e) => setCodeItSettings({...codeItSettings, isLinkPublished: e.target.checked})}
+                      />
+                      <label htmlFor="isLinkPublished" className="text-slate-300 font-black uppercase tracking-widest flex items-center gap-2 cursor-pointer">
+                        <AlertTriangle size={14} className="text-yellow-500" />
+                        Publish Link to Checked-In Participants
+                      </label>
+                    </div>
+                    <button 
+                      type="submit"
+                      disabled={processing}
+                      className={`w-full ${processing ? 'bg-slate-800 text-slate-600' : 'bg-yellow-600 hover:bg-yellow-500 text-black'} font-black py-4 rounded-xl shadow-[0_10px_30px_rgba(250,204,21,0.2)] transition-all uppercase italic tracking-widest mt-4`}
+                    >
+                      {processing ? 'UPDATING_CONFIG...' : 'Save_CodeIt_Config'}
+                    </button>
+                  </form>
+                </div>
+              </div>
+
               {/* Member Management */}
               <div className="bg-slate-900/60 backdrop-blur-xl rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
                 <div className="p-6 border-b border-white/5 flex justify-between items-center bg-white/5">
@@ -1100,6 +1166,16 @@ const Dashboard = () => {
                       >
                         <Download size={18} /> Share on Status
                       </button>
+                      {codeItStatus.hackerrankLink && (
+                        <a 
+                          href={codeItStatus.hackerrankLink}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-xs font-black text-black bg-yellow-400 hover:bg-yellow-500 transition-colors uppercase tracking-[0.2em] px-8 py-5 rounded-2xl flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(250,204,21,0.4)] mt-2 w-[320px]"
+                        >
+                          <Code size={18} /> Join Contest Now
+                        </a>
+                      )}
                     </div>
                   )}
                   <Link to="/codeit/rulebook" className="inline-flex items-center gap-2 text-primary font-mono text-[10px] uppercase tracking-[0.15em] hover:text-primary/80 transition-colors">
