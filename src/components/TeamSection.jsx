@@ -5,44 +5,44 @@ const teamMembers = [
   {
     name: 'Vijesh Patel',
     role: 'Co-ordinator',
-    github: 'https://github.com/Abudarda12',
+    github: 'https://github.com/geccodingclub',
     linkedin: '#',
-    initial: 'VP',
+    img:'https://res.cloudinary.com/dsk3qfmab/image/upload/v1778739552/image_ikg33k.png'
   },
   {
-    name: 'Member 2',
-    role: 'Vice President',
-    github: '#',
-    linkedin: '#',
-    initial: 'VP',
+    name: 'Deepu Kumar',
+    role: 'Volunteer',
+    github: 'https://github.com/CodeBuiltByDeepu',
+    linkedin: 'https://www.linkedin.com/in/deepu-kumar-543aa2312/',
+    img:'https://res.cloudinary.com/dsk3qfmab/image/upload/v1773492901/coding_club_profiles/byssxektyyropop47yir.jpg'
   },
   {
     name: 'Abudarda',
     role: 'Tech Lead',
     github: 'https://github.com/Abudarda12',
     linkedin: 'https://www.linkedin.com/in/abudarda/',
-    initial: 'TL',
+    img:'https://res.cloudinary.com/dsk3qfmab/image/upload/v1773434877/coding_club_profiles/aalvlhaunxstohxroo35.jpg'
   },
   {
-    name: 'Member 4',
+    name: 'Hansraz',
     role: 'Event Manager',
     github: '#',
-    linkedin: '#',
-    initial: 'EM',
+    linkedin: 'https://www.linkedin.com/in/hansraj-975466326/',
+    img:'https://res.cloudinary.com/dsk3qfmab/image/upload/v1773506771/coding_club_profiles/azohpdeokvlqpejr99ts.jpg'
   },
   {
-    name: 'Member 5',
+    name: 'Ishu',
     role: 'Design Lead',
-    github: '#',
+    github: 'https://www.linkedin.com/in/ishu-kumar-5a0940281/',
     linkedin: '#',
-    initial: 'DL',
+    img: 'https://res.cloudinary.com/dsk3qfmab/image/upload/v1774891873/coding_club_profiles/achx5omifwwugxta5ku9.jpg'
   },
   {
-    name: 'Member 6',
-    role: 'Community Lead',
+    name: 'Prince Kumar',
+    role: 'Volunteer',
     github: '#',
     linkedin: '#',
-    initial: 'CL',
+    img: 'https://res.cloudinary.com/dsk3qfmab/image/upload/v1775827492/coding_club_profiles/lqseymm115wzis2djtow.jpg'
   },
 ];
 
@@ -113,7 +113,7 @@ const TeamSection = () => {
                 {/* Avatar */}
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-blue-600/10 border border-primary/20 flex items-center justify-center mb-6 group-hover:border-primary/40 transition-colors duration-300">
                   <span className="font-heading text-lg font-bold text-primary">
-                    {member.initial}
+                    <img src={member.img} alt="Profile pic" />
                   </span>
                 </div>
 
