@@ -39,9 +39,9 @@ const CodeItRegister = () => {
   const [checkingStatus, setCheckingStatus] = useState(true);
   const [timeLeft, setTimeLeft] = useState({});
 
-  // Countdown to May 14th deadline
+  // Countdown to May 20th deadline
   useEffect(() => {
-    const deadline = new Date('2026-05-14T23:59:59');
+    const deadline = new Date('2026-05-20T23:59:59');
     const timer = setInterval(() => {
       const now = new Date();
       const diff = deadline - now;

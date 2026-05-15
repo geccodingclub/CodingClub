@@ -11,7 +11,7 @@ const EventBanner = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
 
-  const deadlineDate = new Date('2026-05-14T23:59:59');
+  const deadlineDate = new Date('2026-05-20T23:59:59');
   
   function getTimeLeft() {
     const now = new Date();

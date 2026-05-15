@@ -4,7 +4,7 @@ import { Clock, Zap, Trophy, BookOpen, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const FeaturedEvent = () => {
-  const deadlineDate = new Date('2026-05-14T23:59:59');
+  const deadlineDate = new Date('2026-05-20T23:59:59');
   const [timeLeft, setTimeLeft] = useState(getTimeLeft());
 
   function getTimeLeft() {
@@ -74,7 +74,7 @@ const FeaturedEvent = () => {
             <span className="hidden sm:inline text-white/10">•</span>
             <span className="flex items-center gap-1.5">
               <Clock size={14} className="text-orange-400" />
-              Registration closes May 14th
+              Registration closes May 20th
             </span>
           </p>
           <p className="text-white/50 text-sm leading-relaxed mb-8 max-w-md">

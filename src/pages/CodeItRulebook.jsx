@@ -13,7 +13,7 @@ const rules = [
     items: [
       'The competition is open to all students of GEC Bhojpur.',
       'Individual participation only — no teams allowed.',
-      'Participants must register before the deadline (May 14, 2026).',
+      'Participants must register before the deadline (May 20, 2026).',
       'Each participant can register only once using their college email or personal email.',
     ],
   },
@@ -145,7 +145,7 @@ const CodeItRulebook = () => {
             </Link>
             <div className="flex items-center gap-2 text-orange-400 font-mono text-[10px] uppercase tracking-[0.15em]">
               <Clock size={12} />
-              Deadline: May 14, 2026
+              Deadline: May 20, 2026
             </div>
           </motion.div>
         </div>
@@ -166,7 +166,7 @@ const CodeItRulebook = () => {
               { label: 'Format', value: 'Individual', icon: <Users size={14} /> },
               { label: 'Platform', value: 'HackerRank', icon: <Laptop size={14} /> },
               { label: 'Languages', value: 'C, C++, Java, Python, JS', icon: <Code size={14} /> },
-              { label: 'Deadline', value: 'May 14, 2026', icon: <Clock size={14} /> },
+              { label: 'Deadline', value: 'May 20, 2026', icon: <Clock size={14} /> },
             ].map((item, i) => (
               <div
                 key={i}
@@ -229,7 +229,7 @@ const CodeItRulebook = () => {
           className="text-center mt-14"
         >
           <p className="text-white/20 font-mono text-xs mb-6">
-            Ready to compete? Register before May 14th.
+            Ready to compete? Register before May 20th.
           </p>
           <Link to="/codeit" className="btn-white text-base px-10 py-4">
             <Zap size={18} />
