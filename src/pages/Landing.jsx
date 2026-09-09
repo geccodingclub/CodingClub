@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Github, Users, ChevronRight, Binary, Cpu, Globe } from 'lucide-react';
 import Terminal from '../components/Terminal';
-import FeaturedEvent from '../components/FeaturedEvent';
 import TeamSection from '../components/TeamSection';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -137,7 +136,7 @@ const Landing = () => {
             </motion.h2>
             <p className="font-mono text-sm text-white/25">Our next big event is right around the corner</p>
           </div>
-          <FeaturedEvent />
+          {/*featured event */}
         </div>
       </section>
 

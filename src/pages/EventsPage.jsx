@@ -3,7 +3,6 @@ import { Calendar, MapPin, Clock, Users, ExternalLink, Sparkles, Binary, Loader2
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import FeaturedEvent from '../components/FeaturedEvent';
 
 const EventsPage = () => {
     const [events, setEvents] = useState([]);
@@ -79,7 +78,7 @@ const EventsPage = () => {
 
                 {/* Featured Event */}
                 <div className="mb-20">
-                    <FeaturedEvent />
+                    
                 </div>
 
                 {/* Events Grid */}
