@@ -22,8 +22,6 @@ import NoticePage from './pages/NoticePage';
 import Resources from './pages/Resources';
 import ContestsPage from './pages/ContestsPage';
 import LeaderboardPage from './pages/LeaderboardPage';
-import CodeItRegister from './pages/CodeItRegister';
-import CodeItRulebook from './pages/CodeItRulebook';
 import CompleteProfile from './pages/CompleteProfile';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
@@ -93,8 +91,6 @@ const AnimatedRoutes = () => {
           </ProtectedRoute>
         } />
         <Route path="/resources" element={<PageWrapper><Resources /></PageWrapper>} />
-        <Route path="/codeit" element={<PageWrapper><CodeItRegister /></PageWrapper>} />
-        <Route path="/codeit/rulebook" element={<PageWrapper><CodeItRulebook /></PageWrapper>} />
         <Route path="/complete-profile" element={
           <ProtectedRoute>
             <PageWrapper><CompleteProfile /></PageWrapper>
@@ -147,7 +143,7 @@ function App() {
             <div className="flex-grow">
               <AnimatedRoutes />
             </div>
-            <EventBanner />
+            {/* <EventBanner /> */}
             <Footer />
           </div>
         </BrowserRouter>
